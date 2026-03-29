@@ -1,0 +1,6 @@
+
+openvoice-env/
+voice_output/
+__pycache__/
+*.pyc
+checkpoints_v2/
