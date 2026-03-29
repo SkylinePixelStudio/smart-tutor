@@ -4,3 +4,4 @@ __pycache__/
 checkpoints_v2/
 voice_output/
 .git/
+openvoice/
