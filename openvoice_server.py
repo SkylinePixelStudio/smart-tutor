@@ -12,7 +12,7 @@ CORS(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, 'voice_output')
-VOICE_SAMPLE = 'D:\\softwares\\ACADworkspace\\voice_sample_trimmed.wav'
+VOICE_SAMPLE = os.path.join(BASE_DIR, 'voice_sample.wav')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 device = "cpu"
@@ -86,7 +86,8 @@ def generate():
             message="@MyShell"
         )
 
-        audio_url = 'http://localhost:5000/audio/speech_' + audio_id + '.wav'
+        host = request.host_url.rstrip('/')
+        audio_url = f"{host}/audio/speech_{audio_id}.wav"
         print("Audio ready: " + audio_url)
         return jsonify({'success': True, 'audio_url': audio_url})
 
