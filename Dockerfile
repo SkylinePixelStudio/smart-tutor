@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir flask flask-cors huggingface_hub wavmark unidic-l
 RUN pip install --no-cache-dir faster-whisper whisper-timestamped
 RUN pip install --no-cache-dir git+https://github.com/myshell-ai/OpenVoice.git --no-deps
 RUN pip install --no-cache-dir git+https://github.com/myshell-ai/MeloTTS.git --no-deps
-RUN pip install --no-cache-dir librosa inflect pydub tqdm scipy transformers
+RUN pip install --no-cache-dir librosa inflect pydub tqdm scipy transformers unidecode
 COPY . .
 EXPOSE 5000
 CMD ["python", "openvoice_server.py"]
