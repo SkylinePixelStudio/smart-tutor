@@ -10,12 +10,15 @@ RUN apt-get update && apt-get install -y \
     libavcodec-dev \
     libavformat-dev \
     libavutil-dev \
+    libavdevice-dev \
+    libavfilter-dev \
     libswscale-dev \
+    libswresample-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir flask flask-cors huggingface_hub wavmark unidic-lite
-RUN pip install --no-cache-dir av --prefer-binary
+RUN pip install --no-cache-dir "av==11.0.0"
 RUN pip install --no-cache-dir git+https://github.com/myshell-ai/OpenVoice.git
 RUN pip install --no-cache-dir git+https://github.com/myshell-ai/MeloTTS.git
 
