@@ -1,10 +1,5 @@
 flask
 flask-cors
-torch
-torchaudio
-git+https://github.com/myshell-ai/OpenVoice.git
-git+https://github.com/myshell-ai/MeloTTS.git
 huggingface_hub
 wavmark
 unidic-lite
-numpy==1.26.4
