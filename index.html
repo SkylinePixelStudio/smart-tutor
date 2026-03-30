@@ -421,10 +421,10 @@ async function speak(text) {
       body: JSON.stringify({ text: cleanText }),
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    if (!data.audio_url) throw new Error('No audio_url returned');
-    addLog('VOICE', 'Playing: ' + data.audio_url.substring(0, 40) + '...');
-    const audio = new Audio(data.audio_url);
+    const audioBlob = await resp.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    addLog('VOICE', 'Playing Fish Audio...');
+    const audio = new Audio(audioUrl);
     state.currentAudio = audio;
     audio.onplay  = () => { startLipSync(); addLog('VOICE', 'Lip sync started'); };
     audio.onended = () => { stopLipSync(); state.currentAudio = null; addLog('VOICE', 'Audio finished'); };
