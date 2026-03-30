@@ -409,36 +409,102 @@ function stopLipSync() {
 }
 
 // ── VOICE / FISH AUDIO ────────────────────────────────────────────
+let audioContext = null;
+
+// Call this on first user click/interaction to unlock AudioContext
+function unlockAudio() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+}
+
+// Add this to your body or any early click handler
+document.addEventListener('click', unlockAudio, { once: false });
+
 async function speak(text) {
   if (!state.voiceEnabled) return;
-  if (state.currentAudio) { state.currentAudio.pause(); state.currentAudio = null; stopLipSync(); }
-  const cleanText = text.replace(/\*\*/g, '').replace(/[#*`]/g, '').trim().substring(0, 300);
+
+  // Stop any current audio
+  if (state.currentAudio) {
+    state.currentAudio.pause();
+    state.currentAudio = null;
+    stopLipSync();
+  }
+
+  const cleanText = text
+    .replace(/\*\*/g, '')
+    .replace(/[#*`]/g, '')
+    .trim()
+    .substring(0, 300);
+
   try {
     addLog('VOICE', 'Requesting Fish Audio...');
+
     const resp = await fetch(state.voiceBackendUrl + '/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: cleanText }),
     });
+
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
     const audioBlob = await resp.blob();
-    // const audioBlob = await resp.blob();
-addLog('VOICE', 'Blob size: ' + audioBlob.size + ' type: ' + audioBlob.type);  // ← add this
- const fishAudioUrl = URL.createObjectURL(audioBlob);
-    const audioUrl = URL.createObjectURL(audioBlob);
-    addLog('VOICE', 'Playing Fish Audio...');
-    const audio = new Audio(fishAudioUrl);
+    addLog('VOICE', 'Blob received — size: ' + audioBlob.size + ' type: ' + audioBlob.type);
+
+    if (audioBlob.size === 0) {
+      throw new Error('Empty audio blob from server');
+    }
+
+    // Force correct MIME type if server returns wrong/empty type
+    const typedBlob = audioBlob.type
+      ? audioBlob
+      : new Blob([audioBlob], { type: 'audio/mpeg' });
+
+    const audioUrl = URL.createObjectURL(typedBlob);
+    const audio = new Audio(audioUrl);
+    audio.preload = 'auto';
     state.currentAudio = audio;
-    audio.onplay  = () => { startLipSync(); addLog('VOICE', 'Lip sync started'); };
-    audio.onended = () => { stopLipSync(); state.currentAudio = null; addLog('VOICE', 'Audio finished'); };
-    audio.onerror = () => { stopLipSync(); state.currentAudio = null; addLog('ERR', 'Audio playback error'); };
-    try { await audio.play(); } catch(e) { addLog('VOICE', 'Autoplay blocked — click page first'); }
+
+    // Ensure AudioContext is unlocked
+    unlockAudio();
+
+    audio.oncanplaythrough = async () => {
+      try {
+        startLipSync();
+        await audio.play();
+        addLog('VOICE', 'Playing Fish Audio...');
+      } catch (playErr) {
+        stopLipSync();
+        addLog('VOICE', 'Autoplay blocked — user must interact with page first');
+        addLog('ERR', 'Play error: ' + playErr.message);
+      }
+    };
+
+    audio.onplay  = () => addLog('VOICE', 'Lip sync started');
+    audio.onended = () => {
+      stopLipSync();
+      state.currentAudio = null;
+      URL.revokeObjectURL(audioUrl); // free memory
+      addLog('VOICE', 'Audio finished');
+    };
+    audio.onerror = (e) => {
+      stopLipSync();
+      state.currentAudio = null;
+      URL.revokeObjectURL(audioUrl);
+      addLog('ERR', 'Audio playback error: ' + (audio.error?.message || 'unknown'));
+    };
+
+    audio.load();
+
   } catch (err) {
-    stopLipSync(); state.currentAudio = null;
+    stopLipSync();
+    state.currentAudio = null;
     addLog('ERR', 'Fish Audio: ' + err.message);
   }
 }
-
 // ── N8N ───────────────────────────────────────────────────────────
 async function triggerN8n(payload) {
   if (!state.n8nConnected || !state.n8nWebhook) return;
