@@ -3,10 +3,8 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
-
 const app = express();
 
-// CORS fix - handles preflight OPTIONS requests
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -15,7 +13,6 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 app.options('*', cors());
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -58,6 +55,37 @@ app.post('/chat', function(req, res) {
     });
 });
 
+app.post('/generate', function(req, res) {
+    var text = req.body.text || '';
+    console.log("Fish Audio TTS: " + text.substring(0, 60));
+    axios.post(
+        'https://api.fish.audio/v1/tts',
+        {
+            text: text,
+            reference_id: '8fcc581b791f496eb11d8f4daef4995c',
+            format: 'mp3',
+            latency: 'normal'
+        },
+        {
+            headers: {
+                'Authorization': 'Bearer ' + process.env.FISH_API_KEY,
+                'Content-Type': 'application/json'
+            },
+            responseType: 'arraybuffer'
+        }
+    )
+    .then(function(response) {
+        res.set('Content-Type', 'audio/mpeg');
+        res.send(Buffer.from(response.data));
+    })
+    .catch(function(err) {
+        var errMsg = err.response?.data?.error?.message || err.message || 'Unknown error';
+        console.error("Fish Audio Error: " + errMsg);
+        res.status(500).json({ error: errMsg });
+    });
+});
+
+// ↓ This stays at the bottom always
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
     console.log("ACAD server running on port " + PORT);
