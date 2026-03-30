@@ -2,53 +2,82 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import uuid
-import torch
-from openvoice import se_extractor
-from openvoice.api import ToneColorConverter
-from melo.api import TTS
+import requests
 
 app = Flask(__name__)
 CORS(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, 'voice_output')
-VOICE_SAMPLE = os.path.join(BASE_DIR, 'voice_sample.wav')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-device = "cpu"
-ckpt_converter = os.path.join(BASE_DIR, 'checkpoints_v2', 'converter')
+# ─── Fish Audio Config (set these in Render Environment Variables) ────────────
+FISH_API_KEY  = os.environ.get("FISH_API_KEY", "")
+FISH_VOICE_ID = os.environ.get("FISH_VOICE_ID", "")
+FISH_API_URL  = "https://api.fish.audio/v1/tts"
+# ─────────────────────────────────────────────────────────────────────────────
 
-print("Loading converter...")
-tone_color_converter = ToneColorConverter(
-    os.path.join(ckpt_converter, 'config.json'),
-    device=device
-)
-tone_color_converter.load_ckpt(
-    os.path.join(ckpt_converter, 'checkpoint.pth')
-)
+print("================================")
+print("  Smart Tutor API - Fish Audio  ")
+print("================================")
 
-print("Extracting your voice...")
-target_se, _ = se_extractor.get_se(
-    VOICE_SAMPLE,
-    tone_color_converter,
-    vad=True
-)
-print("Voice extracted!")
+if not FISH_API_KEY:
+    print("⚠️  WARNING: FISH_API_KEY not set!")
+if not FISH_VOICE_ID:
+    print("⚠️  WARNING: FISH_VOICE_ID not set!")
 
-print("Loading TTS...")
-tts_model = TTS(language='EN', device=device)
-speaker_ids = tts_model.hps.data.spk2id
-speaker_id = speaker_ids['EN_INDIA']
-print("TTS ready!")
 
-source_se = torch.load(
-    os.path.join(BASE_DIR, 'checkpoints_v2', 'base_speakers', 'ses', 'en-india.pth'),
-    map_location=device
-)
+def generate_speech(text: str, audio_id: str):
+    """Call Fish Audio TTS API and save output. Returns file path or None."""
+    headers = {
+        "Authorization": f"Bearer {FISH_API_KEY}",
+        "Content-Type": "application/json",
+        "model": "s1",                          # ← required by Fish Audio
+    }
+    payload = {
+        "text": text,
+        "reference_id": FISH_VOICE_ID,          # ← your cloned voice
+        "format": "mp3",
+        "latency": "normal",
+    }
+    try:
+        response = requests.post(
+            FISH_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
+        response.raise_for_status()
+
+        output_path = os.path.join(OUTPUT_DIR, f"speech_{audio_id}.mp3")
+        with open(output_path, "wb") as f:
+            f.write(response.content)
+
+        print(f"✅ Audio saved: speech_{audio_id}.mp3")
+        return output_path
+
+    except requests.exceptions.HTTPError as e:
+        print(f"❌ Fish Audio error: {e.response.status_code} - {e.response.text}")
+        return None
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return None
+
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'ok', 'message': 'OpenVoice running'})
+    return jsonify({
+        'status': 'ok',
+        'message': 'Smart Tutor running with Fish Audio',
+        'voice_configured': bool(FISH_VOICE_ID),
+        'api_configured': bool(FISH_API_KEY),
+    })
+
+
+@app.route('/')
+def index():
+    return send_from_directory(BASE_DIR, 'index.html')
+
 
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate():
@@ -60,47 +89,43 @@ def generate():
 
     data = request.get_json()
     text = data.get('text', 'Hello')
-    clean_text = text.replace('**', '').replace('#', '').replace('*', '').replace('`', '').strip()
+
+    # Clean markdown symbols
+    clean_text = (
+        text.replace('**', '')
+            .replace('#', '')
+            .replace('*', '')
+            .replace('`', '')
+            .strip()
+    )
+
     if len(clean_text) > 300:
         clean_text = clean_text[:300]
 
-    print("Generating: " + clean_text[:60] + "...")
+    print(f"Generating: {clean_text[:60]}...")
 
-    try:
-        audio_id = str(uuid.uuid4())[:8]
-        base_file = os.path.join(OUTPUT_DIR, 'base_' + audio_id + '.wav')
-        output_file = os.path.join(OUTPUT_DIR, 'speech_' + audio_id + '.wav')
+    audio_id = str(uuid.uuid4())[:8]
+    output_path = generate_speech(clean_text, audio_id)
 
-        tts_model.tts_to_file(
-            clean_text,
-            speaker_id,
-            base_file,
-            speed=1.0
-        )
+    if output_path is None:
+        return jsonify({
+            'success': False,
+            'reply': 'Fish Audio TTS failed. Check API key and Voice ID in Render environment variables.'
+        })
 
-        tone_color_converter.convert(
-            audio_src_path=base_file,
-            src_se=source_se,
-            tgt_se=target_se,
-            output_path=output_file,
-            message="@MyShell"
-        )
+    host = request.host_url.rstrip('/')
+    audio_url = f"{host}/audio/speech_{audio_id}.mp3"
+    print(f"Audio URL: {audio_url}")
 
-        host = request.host_url.rstrip('/')
-        audio_url = f"{host}/audio/speech_{audio_id}.wav"
-        print("Audio ready: " + audio_url)
-        return jsonify({'success': True, 'audio_url': audio_url})
+    return jsonify({'success': True, 'audio_url': audio_url})
 
-    except Exception as e:
-        print("Error: " + str(e))
-        return jsonify({'success': False, 'reply': 'Error: ' + str(e)})
 
 @app.route('/audio/<filename>', methods=['GET'])
 def serve_audio(filename):
     return send_from_directory(OUTPUT_DIR, filename)
 
+
 if __name__ == '__main__':
-    print("================================")
-    print("  OpenVoice API on port 5000   ")
-    print("================================")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting on port {port}...")
+    app.run(host='0.0.0.0', port=port, debug=False)
