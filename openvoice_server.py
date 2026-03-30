@@ -34,7 +34,14 @@ if not GROQ_API_KEY:
 
 
 def generate_speech(text: str, audio_id: str):
-    """Call Fish Audio TTS API and save output as WAV. Returns file path or None."""
+    """Call Fish Audio TTS API and save output as WAV.
+    Returns (output_path, error_message) — one of them will be None."""
+
+    if not FISH_API_KEY:
+        return None, "FISH_API_KEY is not set"
+    if not FISH_VOICE_ID:
+        return None, "FISH_VOICE_ID is not set"
+
     headers = {
         "Authorization": f"Bearer {FISH_API_KEY}",
         "Content-Type": "application/json",
@@ -51,13 +58,14 @@ def generate_speech(text: str, audio_id: str):
         output_path = os.path.join(OUTPUT_DIR, f"speech_{audio_id}.wav")
         with open(output_path, "wb") as f:
             f.write(response.content)
-        return output_path
+        return output_path, None
     except requests.exceptions.HTTPError as e:
-        print(f"Fish Audio HTTP error: {e.response.status_code} - {e.response.text}")
-        return None
+        msg = f"HTTP {e.response.status_code}: {e.response.text}"
+        print(f"Fish Audio HTTP error: {msg}")
+        return None, msg
     except Exception as e:
-        print(f"Fish Audio error: {e}")
-        return None
+        print(f"Fish Audio exception: {e}")
+        return None, str(e)
 
 
 # ── HEALTH ────────────────────────────────────────────────────────
@@ -148,13 +156,15 @@ def generate():
 
     print(f"Generating speech: {clean_text[:60]}...")
     audio_id = str(uuid.uuid4())[:8]
-    output_path = generate_speech(clean_text, audio_id)
+    output_path, error = generate_speech(clean_text, audio_id)
 
     if output_path is None:
-        return jsonify({'success': False, 'reply': 'Fish Audio TTS failed.'})
+        print(f"Speech generation failed: {error}")
+        return jsonify({'success': False, 'reply': f'Fish Audio TTS failed: {error}'})
 
     host = request.host_url.rstrip('/')
     audio_url = f"{host}/audio/speech_{audio_id}.wav"
+    print(f"Audio ready: {audio_url}")
     return jsonify({'success': True, 'audio_url': audio_url})
 
 
