@@ -424,9 +424,10 @@ async function speak(text) {
     const audioBlob = await resp.blob();
     // const audioBlob = await resp.blob();
 addLog('VOICE', 'Blob size: ' + audioBlob.size + ' type: ' + audioBlob.type);  // ← add this
- const audioUrl = URL.createObjectURL(audioBlob);
+ const fishAudioUrl = URL.createObjectURL(audioBlob);
+    const audioUrl = URL.createObjectURL(audioBlob);
     addLog('VOICE', 'Playing Fish Audio...');
-    const audio = new Audio(audioUrl);
+    const audio = new Audio(fishAudioUrl);
     state.currentAudio = audio;
     audio.onplay  = () => { startLipSync(); addLog('VOICE', 'Lip sync started'); };
     audio.onended = () => { stopLipSync(); state.currentAudio = null; addLog('VOICE', 'Audio finished'); };
