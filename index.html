@@ -424,9 +424,7 @@ async function speak(text) {
     const audioBlob = await resp.blob();
     // const audioBlob = await resp.blob();
 addLog('VOICE', 'Blob size: ' + audioBlob.size + ' type: ' + audioBlob.type);  // ← add this
-const audioUrl = URL.createObjectURL(audioBlob);
-    
-    const audioUrl = URL.createObjectURL(audioBlob);
+ const audioUrl = URL.createObjectURL(audioBlob);
     addLog('VOICE', 'Playing Fish Audio...');
     const audio = new Audio(audioUrl);
     state.currentAudio = audio;
