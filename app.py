@@ -86,7 +86,16 @@ def generate_speech(text: str, audio_id: str):
         print(f"Fish Audio exception: {e}")
         return None, str(e)
 
-
+# ═══════════════════════════════════════
+# ROOT (FIX FOR 404)
+# ═══════════════════════════════════════
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        'status': 'ok',
+        'message': 'Smart Tutor API is live',
+        'health_endpoint': '/health'
+    })
 # ═══════════════════════════════════════
 # HEALTH
 # ═══════════════════════════════════════
