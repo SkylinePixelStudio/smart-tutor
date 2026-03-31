@@ -314,13 +314,6 @@
 </div>
 
 <script>
-
-  // Unlock autoplay on first user interaction
-document.addEventListener('click', () => {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  if (ctx.state === 'suspended') ctx.resume();
-}, { once: true });
-  
 const RENDER_URL = "https://smart-tutor-khps.onrender.com";
 
 const state = {
@@ -340,6 +333,14 @@ const state = {
   isSpeaking: false,
   currentAudio: null,
 };
+
+// ── AUDIO UNLOCK (single declaration) ────────────────────────────
+let audioContext = null;
+function unlockAudio() {
+  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioContext.state === 'suspended') audioContext.resume();
+}
+document.addEventListener('click', unlockAudio, { once: false });
 
 // ── AUTO CONNECT ON LOAD ──────────────────────────────────────────
 window.addEventListener('load', () => {
@@ -415,14 +416,6 @@ function stopLipSync() {
   if (wave) wave.classList.remove('active');
 }
 
-// ── AUDIO UNLOCK ──────────────────────────────────────────────────
-let audioContext = null;
-function unlockAudio() {
-  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioContext.state === 'suspended') audioContext.resume();
-}
-document.addEventListener('click', unlockAudio, { once: false });
-
 // ── BROWSER TTS FALLBACK ──────────────────────────────────────────
 function browserSpeak(text) {
   window.speechSynthesis.cancel();
@@ -439,7 +432,7 @@ function browserSpeak(text) {
   window.speechSynthesis.speak(u);
 }
 
-// ── SPEAK (Fish Audio + fallback) ────────────────────────────────
+// ── SPEAK (Fish Audio + browser TTS fallback) ─────────────────────
 async function speak(text) {
   if (!state.voiceEnabled) return;
 
@@ -462,7 +455,7 @@ async function speak(text) {
       body: JSON.stringify({ text: cleanText }),
     });
 
-    // JSON response = backend error (402 no credits, etc.)
+    // JSON response = backend error (no credits, 402, etc.)
     const contentType = resp.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
       const errData = await resp.json();
@@ -473,7 +466,7 @@ async function speak(text) {
     }
 
     const audioBlob = await resp.blob();
-    addLog('VOICE', `Blob: ${audioBlob.size} bytes | ${audioBlob.type}`);
+    addLog('VOICE', 'Blob: ' + audioBlob.size + ' bytes | ' + audioBlob.type);
 
     if (audioBlob.size < 100) {
       addLog('VOICE', 'Blob too small — using browser TTS');
@@ -527,6 +520,7 @@ async function speak(text) {
     browserSpeak(cleanText);
   }
 }
+
 // ── N8N ───────────────────────────────────────────────────────────
 async function triggerN8n(payload) {
   if (!state.n8nConnected || !state.n8nWebhook) return;
