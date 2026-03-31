@@ -1247,8 +1247,8 @@ if(window.speechSynthesis){
 // ═══════════════════════════════════════
 (function init(){
   renderTopics(defaultTopics); // show defaults immediately while connecting
-  const saved=sessionStorage.getItem('acad_backend')||'https://smart-tutor-khps.onrender.com';
-  document.getElementById('backend-url-input').value=saved;
+  const saved=sessionStorage.getItem('acad_backend')||'https://smart-tutor-w1f9.onrender.com';
+  document.getElementById('backend-url-input').value = 'https://smart-tutor-w1f9.onrender.com';
   // Render free tier sleeps — retry once after 35s if first attempt fails
   connectBackend().catch(()=>{
     setConnectStatus('idle','⏳ Render is waking up… retrying in 35s');
