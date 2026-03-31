@@ -361,16 +361,14 @@ body::before{content:'';position:fixed;inset:0;
     <p>Select any topic below. ACAD generates a full AI lecture with slides and answers your doubts in real time — powered by Groq on the backend.</p>
 
     <!-- Backend URL only — no API key exposed to user -->
-    <div class="config-strip">
-      <div class="config-strip" style="display:none">
-      <label>🔗 Backend URL</label>
-      <input type="url" class="config-url-input" id="backend-url-input"
-        value="https://smart-tutor-khps.onrender.com" ...>
-        placeholder="https://smart-tutor.onrender.com" autocomplete="off" spellcheck="false">
-      <button class="btn-connect" onclick="connectBackend()">Connect</button>
-      <div class="connect-status idle" id="connect-status">Enter your backend URL and click Connect.</div>
-    </div>
-  </div>
+    <div class="config-strip" style="display:none">
+  <label>🔗 Backend URL</label>
+  <input type="url" class="config-url-input" id="backend-url-input"
+    value="https://smart-tutor-khps.onrender.com"
+    placeholder="https://smart-tutor.onrender.com" autocomplete="off" spellcheck="false">
+  <button class="btn-connect" onclick="connectBackend()">Connect</button>
+  <div class="connect-status idle" id="connect-status">Enter your backend URL and click Connect.</div>
+</div>
 
   <p class="section-label">Choose a Topic to Enter the Classroom</p>
   <div class="topics-grid" id="topics-grid">
