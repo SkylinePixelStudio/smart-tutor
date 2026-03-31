@@ -647,13 +647,20 @@ async function connectBackend(){
   const url=raw.replace(/\/$/,'');
   setConnectStatus('idle','Connecting…');
   try{
-    const d=await fetchJSON(url+'/health');
+    // Try /health, fall back to root if not found
+     let d={};
+     try{ d=await fetchJSON(url+'/health'); }
+      catch(e){
+       // Some backends expose root instead of /health
+     try{ d=await fetchJSON(url+'/'); }
+     catch(e2){ throw new Error('Backend unreachable — is it awake? ('+e.message+')'); }
+     }
     S.backendUrl=url; S.backendOk=true;
     sessionStorage.setItem('acad_backend',url);
     setConnectStatus('ok',`✓ Connected — ${d.service||'ACAD Backend'} · model: ${d.model||'llama-3.1-8b-instant'}`);
     updateBackendPill(true); addLog('SYS','Backend connected: '+url);
     loadTopics();
-  }catch(e){
+  }  catch(e){
     setConnectStatus('err','✗ '+e.message+' — check the URL, ensure CORS is enabled, then retry.');
     S.backendOk=false; updateBackendPill(false); renderTopics(defaultTopics);
   }
@@ -702,8 +709,14 @@ const defaultTopics=[
 ];
 
 async function loadTopics(){
-  try{const d=await api('/topics');renderTopics(d.topics||defaultTopics);}
-  catch{renderTopics(defaultTopics);}
+  try{
+    const d=await api('/topics');
+    renderTopics(d.topics||d.data||defaultTopics);
+  }catch(e){
+    // /topics route may not exist on backend — silently use defaults
+    renderTopics(defaultTopics);
+    addLog('SYS','Using default topics (backend /topics not found)');
+  }
 }
 
 function renderTopics(topics){
@@ -1233,10 +1246,14 @@ if(window.speechSynthesis){
 // INIT — restore session
 // ═══════════════════════════════════════
 (function init(){
-  renderTopics(defaultTopics);
-  // Hardcoded backend — no manual input needed
-  document.getElementById('backend-url-input').value = 'https://smart-tutor-khps.onrender.com';
-  connectBackend();
+  renderTopics(defaultTopics); // show defaults immediately while connecting
+  const saved=sessionStorage.getItem('acad_backend')||'https://smart-tutor-khps.onrender.com';
+  document.getElementById('backend-url-input').value=saved;
+  // Render free tier sleeps — retry once after 35s if first attempt fails
+  connectBackend().catch(()=>{
+    setConnectStatus('idle','⏳ Render is waking up… retrying in 35s');
+    setTimeout(connectBackend, 35000);
+  });
 })();
 </script>
 </body>
