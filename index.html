@@ -364,6 +364,7 @@ body::before{content:'';position:fixed;inset:0;
     <div class="config-strip">
       <label>🔗 Backend URL</label>
       <input type="url" class="config-url-input" id="backend-url-input"
+        value="https://smart-tutor-khps.onrender.com" ...>
         placeholder="https://smart-tutor.onrender.com" autocomplete="off" spellcheck="false">
       <button class="btn-connect" onclick="connectBackend()">Connect</button>
       <div class="connect-status idle" id="connect-status">Enter your backend URL and click Connect.</div>
@@ -1234,13 +1235,9 @@ if(window.speechSynthesis){
 // ═══════════════════════════════════════
 (function init(){
   renderTopics(defaultTopics);
-  const saved=sessionStorage.getItem('acad_backend');
-  if(saved){
-    document.getElementById('backend-url-input').value=saved;
-    connectBackend();
-  }else{
-    addLog('SYS','ACAD ready — connect your Render backend to enable AI');
-  }
+  // Hardcoded backend — no manual input needed
+  document.getElementById('backend-url-input').value = 'https://smart-tutor-khps.onrender.com';
+  connectBackend();
 })();
 </script>
 </body>
