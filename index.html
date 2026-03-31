@@ -428,13 +428,34 @@ function unlockAudio() {
   }
 }
 
-// Add this to your body or any early click handler
+// ── AUDIO UNLOCK ──────────────────────────────────────────────────
+let audioContext = null;
+function unlockAudio() {
+  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioContext.state === 'suspended') audioContext.resume();
+}
 document.addEventListener('click', unlockAudio, { once: false });
 
+// ── BROWSER TTS FALLBACK ──────────────────────────────────────────
+function browserSpeak(text) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
+  );
+  if (preferred) u.voice = preferred;
+  u.rate = 0.95;
+  u.onstart = () => { startLipSync(); addLog('VOICE', 'Browser TTS speaking...'); };
+  u.onend   = () => { stopLipSync();  addLog('VOICE', 'Done'); };
+  u.onerror = (e) => { stopLipSync(); addLog('ERR', 'Browser TTS: ' + e.error); };
+  window.speechSynthesis.speak(u);
+}
+
+// ── SPEAK (Fish Audio + fallback) ────────────────────────────────
 async function speak(text) {
   if (!state.voiceEnabled) return;
 
-  // Stop any current audio
   if (state.currentAudio) {
     state.currentAudio.pause();
     state.currentAudio = null;
@@ -442,10 +463,8 @@ async function speak(text) {
   }
 
   const cleanText = text
-    .replace(/\*\*/g, '')
-    .replace(/[#*`]/g, '')
-    .trim()
-    .substring(0, 300);
+    .replace(/\*\*/g, '').replace(/[#*`]/g, '')
+    .trim().substring(0, 300);
 
   try {
     addLog('VOICE', 'Requesting Fish Audio...');
@@ -456,64 +475,69 @@ async function speak(text) {
       body: JSON.stringify({ text: cleanText }),
     });
 
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-
-    const audioBlob = await resp.blob();
-    addLog('VOICE', 'Blob received — size: ' + audioBlob.size + ' type: ' + audioBlob.type);
-
-    if (audioBlob.size === 0) {
-      throw new Error('Empty audio blob from server');
+    // JSON response = backend error (402 no credits, etc.)
+    const contentType = resp.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const errData = await resp.json();
+      addLog('VOICE', 'Fish Audio unavailable — using browser TTS');
+      addLog('ERR', errData.reply || JSON.stringify(errData));
+      browserSpeak(cleanText);
+      return;
     }
 
-    // Force correct MIME type if server returns wrong/empty type
-    const typedBlob = audioBlob.type
-      ? audioBlob
-      : new Blob([audioBlob], { type: 'audio/mpeg' });
+    const audioBlob = await resp.blob();
+    addLog('VOICE', `Blob: ${audioBlob.size} bytes | ${audioBlob.type}`);
 
-    const audioUrl = URL.createObjectURL(typedBlob);
+    if (audioBlob.size < 100) {
+      addLog('VOICE', 'Blob too small — using browser TTS');
+      browserSpeak(cleanText);
+      return;
+    }
+
+    const audioUrl = URL.createObjectURL(
+      new Blob([audioBlob], { type: 'audio/mpeg' })
+    );
+
     const audio = new Audio(audioUrl);
     audio.preload = 'auto';
     state.currentAudio = audio;
-
-    // Ensure AudioContext is unlocked
     unlockAudio();
 
     audio.oncanplaythrough = async () => {
       try {
         startLipSync();
         await audio.play();
-        addLog('VOICE', 'Playing Fish Audio...');
-      } catch (playErr) {
+        addLog('VOICE', 'Fish Audio playing ✅');
+      } catch (e) {
         stopLipSync();
-        addLog('VOICE', 'Autoplay blocked — user must interact with page first');
-        addLog('ERR', 'Play error: ' + playErr.message);
+        addLog('VOICE', 'Autoplay blocked — using browser TTS');
+        browserSpeak(cleanText);
       }
     };
 
-    audio.onplay  = () => addLog('VOICE', 'Lip sync started');
     audio.onended = () => {
       stopLipSync();
       state.currentAudio = null;
-      URL.revokeObjectURL(audioUrl); // free memory
+      URL.revokeObjectURL(audioUrl);
       addLog('VOICE', 'Audio finished');
     };
-  
-  audio.onerror = () => {
-  stopLipSync();
-  state.currentAudio = null;
-  URL.revokeObjectURL(audioUrl);
-  const code = audio.error?.code;
-  const codes = { 1:'ABORTED', 2:'NETWORK', 3:'DECODE ERROR', 4:'FORMAT NOT SUPPORTED' };
-  addLog('ERR', `Code ${code}: ${codes[code] || 'unknown'}`);
-  addLog('ERR', `Blob size: ${audioBlob.size} | type: ${audioBlob.type}`);
-   };
+
+    audio.onerror = () => {
+      stopLipSync();
+      state.currentAudio = null;
+      URL.revokeObjectURL(audioUrl);
+      addLog('VOICE', 'Fish Audio error — using browser TTS');
+      browserSpeak(cleanText);
+    };
 
     audio.load();
 
   } catch (err) {
     stopLipSync();
     state.currentAudio = null;
-    addLog('ERR', 'Fish Audio: ' + err.message);
+    addLog('VOICE', 'Fish Audio failed — using browser TTS');
+    addLog('ERR', err.message);
+    browserSpeak(cleanText);
   }
 }
 // ── N8N ───────────────────────────────────────────────────────────
