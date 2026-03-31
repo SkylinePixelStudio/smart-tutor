@@ -54,14 +54,12 @@
   .avatar-name{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:0.2em;margin-bottom:2px;}
   .avatar-role{font-size:0.7rem;color:var(--text-dim);letter-spacing:0.15em;font-family:'Share Tech Mono',monospace;margin-bottom:12px;}
   .voice-controls{width:100%;padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
-  .ctrl-row{display:flex;align-items:center;gap:10px;}
-  .ctrl-label{font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;width:50px;font-family:'Share Tech Mono',monospace;}
   .field-label{font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;font-family:'Share Tech Mono',monospace;margin-bottom:5px;display:block;}
   .field-input,.clone-input{width:100%;background:var(--panel);border:1px solid rgba(0,210,255,0.25);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:6px 10px;border-radius:6px;outline:none;margin-bottom:6px;}
   .clone-input::placeholder,.field-input::placeholder{color:var(--text-dim);}
   .btn-sm{padding:5px 12px;border-radius:6px;border:1px solid;background:transparent;font-family:'Rajdhani',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;}
-  .btn-accent{border-color:var(--accent);color:var(--accent);}.btn-accent:hover{background:rgba(0,210,255,0.12);box-shadow:0 0 12px rgba(0,210,255,0.2);}
-  .btn-green{border-color:var(--accent3);color:var(--accent3);}.btn-green:hover{background:rgba(0,255,159,0.12);box-shadow:0 0 12px rgba(0,255,159,0.2);}
+  .btn-accent{border-color:var(--accent);color:var(--accent);}.btn-accent:hover{background:rgba(0,210,255,0.12);}
+  .btn-green{border-color:var(--accent3);color:var(--accent3);}.btn-green:hover{background:rgba(0,255,159,0.12);}
   .chat-panel{display:flex;flex-direction:column;height:calc(100vh - 180px);min-height:500px;}
   .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
   .chat-messages::-webkit-scrollbar{width:4px;}.chat-messages::-webkit-scrollbar-thumb{background:rgba(0,210,255,0.3);border-radius:2px;}
@@ -89,7 +87,7 @@
   .chat-input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.9rem;padding:10px 14px;border-radius:8px;outline:none;transition:border-color 0.2s;resize:none;height:44px;}
   .chat-input:focus{border-color:var(--accent);}.chat-input::placeholder{color:var(--text-dim);}
   .send-btn{padding:10px 20px;background:linear-gradient(135deg,rgba(0,210,255,0.2),rgba(123,97,255,0.2));border:1px solid var(--accent);color:var(--accent);font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:600;border-radius:8px;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;}
-  .send-btn:hover{background:linear-gradient(135deg,rgba(0,210,255,0.3),rgba(123,97,255,0.3));box-shadow:0 0 16px rgba(0,210,255,0.2);}
+  .send-btn:hover{background:linear-gradient(135deg,rgba(0,210,255,0.3),rgba(123,97,255,0.3));}
   .send-btn:disabled{opacity:0.4;cursor:not-allowed;}
   .right-col{display:flex;flex-direction:column;gap:12px;height:calc(100vh - 180px);overflow-y:auto;}
   .n8n-panel{background:var(--surface);border:1px solid rgba(255,140,0,0.25);border-radius:12px;overflow:hidden;}
@@ -98,9 +96,6 @@
   .n8n-body{padding:14px 16px;}
   .field-group{margin-bottom:12px;}
   .n8n-status{display:flex;align-items:center;gap:6px;font-size:0.7rem;font-family:'Share Tech Mono',monospace;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--panel);margin-bottom:10px;}
-  .flow-step{display:flex;align-items:center;gap:6px;font-size:0.7rem;font-family:'Share Tech Mono',monospace;padding:5px 8px;border-radius:6px;margin-bottom:3px;background:var(--panel);border:1px solid var(--border);}
-  .flow-step .step-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0;}
-  .flow-arrow{font-size:0.6rem;color:var(--text-dim);padding-left:16px;margin:-2px 0;}
   .stats-panel .panel-body{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
   .stat-val{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:800;color:var(--accent);}
@@ -112,7 +107,7 @@
   .footer-badges{display:flex;gap:8px;}
   .badge{padding:2px 8px;border-radius:4px;border:1px solid var(--border);font-size:0.6rem;}
   .mic-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--panel);color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:1rem;}
-  .mic-btn:hover{border-color:var(--accent3);color:var(--accent3);box-shadow:0 0 10px rgba(0,255,159,0.2);}
+  .mic-btn:hover{border-color:var(--accent3);color:var(--accent3);}
   .mic-btn.recording{border-color:var(--danger);color:var(--danger);animation:micPulse 1s ease-in-out infinite;}
   @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,0.4);}50%{box-shadow:0 0 0 8px rgba(255,77,109,0);}}
   .api-input{flex:1;background:var(--panel);border:1px solid rgba(0,210,255,0.15);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:0.65rem;padding:6px 10px;border-radius:6px;outline:none;}
@@ -128,7 +123,9 @@
 <div class="grid-bg"></div>
 <div class="app">
   <header class="header">
-    <div class="logo" style="display:flex;align-items:center;gap:10px;"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACQAJADASIAAhEBAxEB/8QAHAABAAEFAQEAAAAAAAAAAAAAAAUBAgMEBgcI/8QANRAAAgEEAAQEBQMDAwUAAAAAAQIDAAQFEQYSITEHE0FRFCJhcYEVMpEIFrFCUoIjJDOh0f/EABsBAQADAQEBAQAAAAAAAAAAAAACAwQBBgUH/8QALxEAAQQBAwIFAgUFAAAAAAAAAQACAxEhBBIxQVEFYXGBwRMyIrHR4fAGI3KRof/aAAwDAQACEQMRAD8A+yqUpREpSgoiVUU/NN0XEpSlESlKURKUpREqnSq1Q0XUpSlESlKURKClBREpSlESlY5pUiXmc/YeprgePuPYsTjrl8f5N3cQRrNIu2aOOAyeW83ydZPLbXMinY2N6B3V0MD5nbWhVSzNjFld1PdwQglmB0NnR6D7mufXjbBXEqxWWUs7pmkaJRbv525FjaQoCvTm5FY636VXEX9pmMWlzbyRzRuCkqhlfkcDTo3KSNg9CNn261Af2XGFuo7fIyWEYywymOa1iUNZyGIJIoDAoysS51rXzmtMcEQsScrO+aQ0Wreh4/s7qzlurGK8uooo7aRuSJVPJcIHiPzMO+9H2P8ANbsvFkcDSRyR3RmjkMbRJCHbaorueh7KGGz79t1H4ng7C4yya0t1uTG9tbWz882yy25JjPT12x2fWtu84fsrmSWUSXMEsskjvJDLpjzqquvUHoQq/bXSsWtjmEhOmrbjn/v7LbpJICwCe7zx7V83hSlpxHYzS+UtzA76jOgeUkSDad++wDoVKxXcUmvm5T7NXGwcM28GbgyMU7BInZmiK9D8gSMA+yAHX3rdz9/LYw2wh8lHuJ1hEs+/Li2CeZuo9tAbGyRVTHPbG5+obVHp17fp+ym9sbpGs07rsdeh6/r6ea63dK5bEZ8fGNjpmD3MI1MY1JhD62VDHsdaOj7666rpYZVlXmQ/ceoqTHNeNzTY+eyg5rmHa4Ufjur6UpXUSlKURKUpREqyaRYoyzfge5q+uH8SM/NYRWVpBHY6yUz2gmv7l4LeL/ps3zOg2rPrlXWuvr00bYYjK/aFVLIGNsqP4v4wxXmXmNu8rPjLdle3bL28g1ZXS9RCw1tHIAZdjlk6qOp6wvBfh9ZPcjiDL2UMF1M7T/DW3NHEXdWSVmQ945VIYwuu0JZSSOgt8I+FrIwR8TvLdz+dEYrZZ7x5mEauQUkJJSYI6bjkAGxo6B616ZX1pJBBcUR9V89rTLT3rFa28FpbR21pBFBBEoSOOJAqIo7AAdAKyGm6VjV9KlKUriJVHVXUq6qynuGGwarVe1CLRcH4i8J3t3wxeWmDVpVm20tkrBHuSWGo/NPVYwS7sDvZAA6bB2+FeJb+2y74u8lGTt7deS7y8KhLaC7LMWtiTocijlVWGyDpWPM1diDXn/ihw6t0bXIzW9zkMRZKzyYi35ERpS3N5pDaQqQXDs5+QHnUhh1np4owBFVBVTGQyGayTi/b+fyyvVoZBKnMNj0IPcH2q+vPfB7ia5zuA864s2t44WSKNtysskZjVl+aUBndd8rN2JGwetehVknhdC8sK3RSCRu4IaUp6VSrUpQ0oiwX0nlwHXdugqGeO2v7R4ri3jngf5XjmjDKw+qnoa3sxKyEcqM5Ub5R3O6wDsPSpxOP1Q0HgWRR68G+MUcZ9uueXPKpGiRoscaKiKAqqo0AB2AA7CjkIhdiFQdSzHQH3NXaI6aO6+e/GOK44/47fAcHR3l9cYy3dsk/xjfClh2jVCeTn38ux3Y69Ca+lBD9ZxF0BklVs2ukaxxqyvfLG8tL6D4iyuoLqHmK+ZDIHXYOiNjpsGs1cx4U4iTB+HGBxs0D28yWivNG68rK7kuwI9CC2vxXT1U4AOIClIA15AOENKEEdwRSoqCVUVSlEVfWsdxDDcwSW88SSwyoUkjdQyupGiCD3BFX1Xlb0U/xS6TlRvEGTOGxyXKY68vh5scIhtUDMoJ1vX+0CuksZOeAc3dehqLnMkcTsiFpFUlU3rmOug/NW8HXeQu8ZDNlcf8Ap15IhMtt5ofyyCRrY6Hp1quUW21pjr6YIAwaJvJvjHlRyO+einaqO1UqprKrFQ0oaURQuZkuEuV+HgExLqrDm1yrrqa808YchNLaT2OlWO1urZkZSQx54pCd/wACvSc+18ky/AxQyOZF5xIxACepH1rzPxKsbvI32UtrGEzzCazkKB1B5RFKN9SPUitem+82T09Pb5XmvHy86ctb1NeuCfhcvwNxNlsZkkiF3NPaEHzLeSQspH031U/UVwHG3FNzw7nMzwpwdNcYnGw30ouZkk/7m7lDHmLyDqFHVVUa0Bs7JNddY47I4/JoL6xubXanlMsZUN27HsfxXmvGePyGS8U+JLXHWNzeXH6ncHyreJpG15h66UHp9a2+En6niGpa/LWsYR6kuv8AIK7+mQW6bTmTne4G+wDe/qvYf6bMpenB3TTXEty0+TjhZp5WcgFSSQSe/Suv8es8+H4EktLaRlvMpILWLkOm5e7kfjQ/5VyfgVhsphMOkWVspLOWXLxMscrLzEBG66BJH5rU8QZszxl4wx4vhpbW4l4fjDKJ2HlCRWVnLf8AIquvXlrzmqneH6hg6vIHuTx7L9J8N0cWo8VbM6tkY3uJOPw1Vn/Kh6Wp7wIvcni8rmuBs4z/ABlm4uYuZy+gwUOAT6dUYfc1OySZDi/O3NpBdva421Om5T+7qRvXqTo/QCoOO34mwWatOKOKFsTfTSLHPJaaCsig6U67nlJ6/wDyux4fso8BPckkyx3UhkWRf9myV/8AR615jX+Jxt2afU7mwtfTuRgi2XXDSbB9lZ4iWfXfrYtpke0VWW7xh5b+Y9VLWuOktHjW2n1CoAKsPQelaXGd3JHbQWVuSZriQAKDonroD8kj+DWf9cWTJR2drbST7OnYdOX6/j13XJ5SfMZvjCWTh/4ZzjCNtMw5ATtR9z+4/mtTG6BmldpvDSS2R1Gi4gCgXbb8u3Urw+s1Ml7pMu44ypjw2yk91j7vG3zE3thOyPs9eUk6/ggj+K42XE3HEfiPncUMzdY8I0siNGxbRBUdF2Boc26zwXGZ4a8Q7W/4g+GiTKAxSNCw5DvQ5j7ENymuLXxAxPCf9QHFN7nnnW0jWWziWBBIwfnjYkjY76P8CvceEaSYwBoGQMd6vA9aq15eVzNZsjk4Y+nXjFY/2tyC+4q8IfELEYfMcQ3Od4by7hFa4JLR7YKWAYkqyllJAOmB7b7e58IyZ15rkZ62sreRbmRLcWshYNCP2lt9m9xXgN/kLvxr8TcI2Jxl3Bw1hpBJNdTLrY51dySNgM3KqqoJPcmvfuEUzonujnp7GaRrqRrc2qFQsJ/aG33b3NbvEPsBeAH1n44xfdeggYGEBpNLpqHtSh7V8FfSQ96UpRFFZ6O4MZa0ZEmZdIzjagj3qAynCuBy9wLvK4yG5ueRUaQlhsAfQiusvo+eA67r1FRURkLP5gUDfy6PcfWrY37XjmzjyFZz2+Vi1OnjlBEgBHY5XNf2Vj7VXXFT3NtE409pJKZbaT7o3UH2ZSCKjrvw6s8nlL+4ymQuY7G6uGmOOxzm2ilJP753X55nPrshR2ArujVK0s/tvdI3kgA+3H5qETWwtDYxQBsVjJXPcP8ABPC2AKNh8NBaFH8xSrOTza1vqT1qagsrO3mkngtLeKWT/wAjxxKrP131IGz196z0qAiY1xcALJs+Z7nzV755H/c4n3Vk0UUy8k0SSLvenUMN/mqlEK8hRSvtrpV1K6Y2uuxyq9xVkUMUW/KiRN9+VQN1SGCGEsYYY4+Y7bkQDZ+uu9ZKUbG1oAaKpcWKe3t7jl8+3hm5f2+ZGG19t1rTYfETzPNNiMdLK527vaRszH3JI2a3qVMEjhcoKzyVS1MFsEgAUhAiAKh13CjQqnB1rkLXGxRZXIDIXkaES3IiEfmEknfKO3TpWnmlzJay/SJbOMC5U3fxCk80P+oLrs31ro7GPy4BsdW61VKaatcYIYBYo58xWOasc8Xn2WenpShrKrEpSlEVKiMjFLCx8lVOzteY9PrUxWOeNZYyrfg+1CCWltkX1HI9FFwvKifT60q6VGicq46/5q2twNrIRSUpSi4lKUoiUpSiJVRVKuijeV+VR+fahwugWtLhWDMyQuM7JZyTCdyptVIXyt/IDv8A1a710tY4Y1ijCL+T71krJI/cVtJ3EuoC+2AlKUqCJSlKIlKUoixzRJKvKw+x9qjp7eSI71zL7ipWlTY8tUHMDlzeXvUxuJvMi8Uky2sDzGOMbdwqk6H1Oqgn4yx9lBj/ANYaCCe/RpIBaTi5jcB0QcrgDmLGRQAB6N7V3UtrE52AUb3Wou84esriRJJLa2laMoUJTRHI4dR09AwDa7bFaWTMPKg1gH3C/RRf9x4QG958hHGtjcra3DurKiSswVV5iNEliB09+tF4jwbXdpaLk4GnvESS3jG9yK7FVYdOxKkf57iqS8EYyS3v7Z7WR4L+7F3coZyQ8gbm317AnuP8VZBwJiY3xMnwcjyYmOKOzke4JZBGSVJO+p+Y73331qzdFXK7si8/4P1WG24sxV08YtGeVTkzjJWI5fJl0xUkHurFQAfXmFT+6x4rhjG44OLSytLbnIZzHHssQzMCSe5DMx2evU1LxWkUfXXMfdqqfKwfauOjBP4RQ81pQW8kvXXKvuakYYkiXlQfc+9X0rO55cptYGpSlKgppSlKIlKUoiUpSiJQUqooiUpSi4lKUoiU3SmqIqUqvSqUXUpSlESnpSlEX//Z" alt="ACAD Online Coaching" style="height:55px;width:auto;border-radius:50%;" /><div>ACAD<span>Academic Coaching and Development</span></div></div>
+    <div class="logo" style="display:flex;align-items:center;gap:10px;">
+      <div>ACAD<span>Academic Coaching and Development</span></div>
+    </div>
     <div class="subject-tabs">
       <button class="tab-btn active" onclick="setSubject('General')">ALL</button>
       <button class="tab-btn" onclick="setSubject('Mathematics')">MATH</button>
@@ -145,7 +142,6 @@
   </header>
 
   <main class="main">
-    <!-- LEFT: AVATAR PANEL -->
     <div class="avatar-panel">
       <div class="panel-header">TUTOR AVATAR / LIP SYNC ENGINE</div>
       <div class="avatar-stage">
@@ -194,7 +190,6 @@
         <div class="avatar-name">ACAD</div>
         <div class="avatar-role">AI TUTOR · v2.1.0</div>
       </div>
-
       <div class="voice-controls">
         <div class="sadtalker-section">
           <div class="sadtalker-header">🔊 VOICE ENGINE <span class="sadtalker-badge">Fish Audio</span></div>
@@ -204,7 +199,6 @@
             <button class="btn-sm btn-green" onclick="saveVoiceConfig()">SAVE CONFIG</button>
           </div>
         </div>
-
         <div style="border-top:1px solid var(--border);padding-top:10px;">
           <label class="field-label">BACKEND URL</label>
           <div class="api-row">
@@ -212,14 +206,12 @@
             <button class="btn-sm btn-green" onclick="saveBackendUrl()">SAVE</button>
           </div>
         </div>
-
         <button class="btn-sm btn-accent" style="width:100%;justify-content:center;display:flex;" onclick="toggleVoice()" id="voice-toggle-btn">
           🔈 ENABLE VOICE OUTPUT
         </button>
       </div>
     </div>
 
-    <!-- CENTER: CHAT PANEL -->
     <div class="panel chat-panel">
       <div class="panel-header">CLASSROOM DIALOGUE — <span id="subject-label" style="color:var(--accent3);margin-left:4px;">GENERAL STUDIES</span></div>
       <div class="chat-messages" id="chat-messages">
@@ -247,7 +239,6 @@
       </div>
     </div>
 
-    <!-- RIGHT PANEL -->
     <div class="right-col">
       <div class="n8n-panel">
         <div class="n8n-header">⚙ N8N WORKFLOW INTEGRATION</div>
@@ -282,7 +273,6 @@
           </div>
         </div>
       </div>
-
       <div class="panel stats-panel">
         <div class="panel-header">SESSION METRICS</div>
         <div class="panel-body">
@@ -292,7 +282,6 @@
           <div class="stat-card"><div class="stat-val" id="stat-time">0m</div><div class="stat-label">SESSION</div></div>
         </div>
       </div>
-
       <div class="panel">
         <div class="panel-header">SYSTEM LOG</div>
         <div class="session-log" id="session-log">
@@ -316,6 +305,7 @@
 <script>
 const RENDER_URL = "https://smart-tutor-khps.onrender.com";
 
+// ── STATE (all globals in one place) ─────────────────────────────
 const state = {
   subject: 'General Studies',
   voiceEnabled: false,
@@ -332,9 +322,10 @@ const state = {
   lipSyncInterval: null,
   isSpeaking: false,
   currentAudio: null,
+  ttsKeepalive: null,
 };
 
-// ── AUDIO UNLOCK (single declaration) ────────────────────────────
+// ── AUDIO UNLOCK ──────────────────────────────────────────────────
 let audioContext = null;
 function unlockAudio() {
   if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -349,26 +340,25 @@ window.addEventListener('load', () => {
     .then(data => {
       if (data.status === 'ok') {
         document.getElementById('ai-dot').className = 'dot';
-        addLog('SYS', 'Backend connected ✅ ' + RENDER_URL);
+        addLog('SYS', 'Backend connected ' + RENDER_URL);
         if (data.voice_configured) {
           document.getElementById('voice-dot').className = 'dot warn';
-          addLog('VOICE', 'Fish Audio voice engine ready ✅');
+          addLog('VOICE', 'Fish Audio ready');
         }
-        addMessage('ACAD', '✅ Backend connected! I am ready to teach. Select a subject and ask me anything!');
+        addMessage('ACAD', 'Backend connected! I am ready to teach. Select a subject and ask me anything!');
       }
     })
     .catch(err => {
       addLog('ERR', 'Backend health check failed: ' + err.message);
-      addMessage('ACAD', '⚠️ Could not reach backend at ' + RENDER_URL + '. Check Render logs.');
+      addMessage('ACAD', 'Could not reach backend at ' + RENDER_URL);
     });
 });
 
 // ── AI BACKEND ────────────────────────────────────────────────────
 async function askAI(userMessage) {
-  const baseUrl = state.backendUrl || RENDER_URL;
   try {
     addLog('AI', 'Sending to backend...');
-    const resp = await fetch(baseUrl + '/chat', {
+    const resp = await fetch(state.backendUrl + '/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userMessage, subject: state.subject }),
@@ -380,26 +370,28 @@ async function askAI(userMessage) {
     return data.reply || 'No reply from backend.';
   } catch (err) {
     addLog('ERR', 'Backend: ' + err.message);
-    return '⚠️ Backend error: ' + err.message;
+    return 'Backend error: ' + err.message;
   }
 }
 
 // ── LIP SYNC ──────────────────────────────────────────────────────
 function startLipSync() {
-  const mouthOpen = document.getElementById('mouth-open');
+  if (state.lipSyncInterval) return;
+  const mouthOpen   = document.getElementById('mouth-open');
   const mouthClosed = document.getElementById('mouth-closed');
-  const wave = document.getElementById('speaking-wave');
-  state.isSpeaking = true;
+  const wave        = document.getElementById('speaking-wave');
+  state.isSpeaking  = true;
   wave.classList.add('active');
-  let mouthState = false, frameCount = 0;
+  let mouthState = false;
   state.lipSyncInterval = setInterval(() => {
-    frameCount++;
-    if (frameCount % (Math.random() > 0.3 ? 1 : 2) === 0) mouthState = !mouthState;
+    mouthState = !mouthState;
     if (mouthState) {
-      mouthOpen.style.opacity = '1'; mouthClosed.style.opacity = '0';
-      mouthOpen.setAttribute('transform', 'translate(90,118) scale(1,' + (0.6 + Math.random() * 0.4) + ') translate(-90,-118)');
+      mouthOpen.style.opacity = '1';
+      mouthClosed.style.opacity = '0';
+      mouthOpen.setAttribute('transform','translate(90,118) scale(1,' + (0.6 + Math.random() * 0.4) + ') translate(-90,-118)');
     } else {
-      mouthOpen.style.opacity = '0'; mouthClosed.style.opacity = '1';
+      mouthOpen.style.opacity = '0';
+      mouthClosed.style.opacity = '1';
       mouthOpen.removeAttribute('transform');
     }
   }, 120);
@@ -407,24 +399,22 @@ function startLipSync() {
 
 function stopLipSync() {
   if (state.lipSyncInterval) { clearInterval(state.lipSyncInterval); state.lipSyncInterval = null; }
+  if (state.ttsKeepalive)    { clearInterval(state.ttsKeepalive);    state.ttsKeepalive = null; }
   state.isSpeaking = false;
-  const mouthOpen = document.getElementById('mouth-open');
+  const mouthOpen   = document.getElementById('mouth-open');
   const mouthClosed = document.getElementById('mouth-closed');
-  const wave = document.getElementById('speaking-wave');
-  if (mouthOpen) { mouthOpen.style.opacity = '0'; mouthOpen.removeAttribute('transform'); }
-  if (mouthClosed) mouthClosed.style.opacity = '1';
-  if (wave) wave.classList.remove('active');
+  const wave        = document.getElementById('speaking-wave');
+  if (mouthOpen)   { mouthOpen.style.opacity = '0'; mouthOpen.removeAttribute('transform'); }
+  if (mouthClosed)   mouthClosed.style.opacity = '1';
+  if (wave)          wave.classList.remove('active');
 }
 
-// ── BROWSER TTS FALLBACK (with long-text fix) ─────────────────────
-let ttsKeepalive = null;
-
+// ── BROWSER TTS FALLBACK (Chrome freeze fix) ──────────────────────
 function browserSpeak(text) {
   window.speechSynthesis.cancel();
-  if (ttsKeepalive) { clearInterval(ttsKeepalive); ttsKeepalive = null; }
+  if (state.ttsKeepalive) { clearInterval(state.ttsKeepalive); state.ttsKeepalive = null; }
 
-  // Split into small chunks — max 80 chars at natural breaks
-  const sentences = text
+  const chunks = text
     .replace(/([.!?])\s+/g, '$1|')
     .replace(/([,;:])\s+/g, '$1|')
     .split('|')
@@ -432,7 +422,6 @@ function browserSpeak(text) {
     .filter(s => s.length > 0);
 
   let index = 0;
-  let speaking = false;
 
   function getVoice() {
     const voices = window.speechSynthesis.getVoices();
@@ -441,50 +430,26 @@ function browserSpeak(text) {
     ) || voices[0];
   }
 
-  function stopLipSync() {
-  if (state.lipSyncInterval) { clearInterval(state.lipSyncInterval); state.lipSyncInterval = null; }
-  if (ttsKeepalive) { clearInterval(ttsKeepalive); ttsKeepalive = null; } // ← add this line
-  state.isSpeaking = false;
-  const mouthOpen = document.getElementById('mouth-open');
-  const mouthClosed = document.getElementById('mouth-closed');
-  const wave = document.getElementById('speaking-wave');
-  if (mouthOpen) { mouthOpen.style.opacity = '0'; mouthOpen.removeAttribute('transform'); }
-  if (mouthClosed) mouthClosed.style.opacity = '1';
-  if (wave) wave.classList.remove('active');
-}
-
-    const chunk = sentences[index];
-    const u = new SpeechSynthesisUtterance(chunk);
+  function speakNext() {
+    if (index >= chunks.length) {
+      stopLipSync();
+      addLog('VOICE', 'TTS finished');
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(chunks[index]);
     const voice = getVoice();
     if (voice) u.voice = voice;
-    u.rate = 0.95;
+    u.rate   = 0.95;
     u.volume = 1.0;
-
-    if (index === 0) {
-      startLipSync();
-      addLog('VOICE', 'Browser TTS speaking...');
-    }
-
-    u.onstart  = () => { speaking = true; };
-    u.onend    = () => { speaking = false; index++; speakNext(); };
-    u.onerror  = (e) => {
-      speaking = false;
-      if (e.error !== 'interrupted') {
-        index++; speakNext();
-      }
-    };
-
+    if (index === 0) { startLipSync(); addLog('VOICE', 'Browser TTS speaking...'); }
+    u.onend   = () => { index++; speakNext(); };
+    u.onerror = (e) => { if (e.error !== 'interrupted') { index++; speakNext(); } };
     window.speechSynthesis.speak(u);
   }
 
-  // Aggressive Chrome keepalive — every 5 seconds force resume
-  ttsKeepalive = setInterval(() => {
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-      addLog('VOICE', 'TTS resumed (Chrome fix)');
-    }
-    // If synthesis says speaking but nothing is playing, nudge it
-    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+  // Keepalive stored in state so stopLipSync can clear it
+  state.ttsKeepalive = setInterval(() => {
+    if (window.speechSynthesis.speaking) {
       window.speechSynthesis.pause();
       window.speechSynthesis.resume();
     }
@@ -496,87 +461,47 @@ function browserSpeak(text) {
 // ── SPEAK (Fish Audio + browser TTS fallback) ─────────────────────
 async function speak(text) {
   if (!state.voiceEnabled) return;
+  if (state.currentAudio) { state.currentAudio.pause(); state.currentAudio = null; stopLipSync(); }
 
-  if (state.currentAudio) {
-    state.currentAudio.pause();
-    state.currentAudio = null;
-    stopLipSync();
-  }
-
-  const cleanText = text
-    .replace(/\*\*/g, '').replace(/[#*`]/g, '')
-    .trim().substring(0, 300);
+  const cleanText = text.replace(/\*\*/g,'').replace(/[#*`]/g,'').trim().substring(0, 300);
 
   try {
     addLog('VOICE', 'Requesting Fish Audio...');
-
     const resp = await fetch(state.voiceBackendUrl + '/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: cleanText }),
     });
 
-    // JSON response = backend error (no credits, 402, etc.)
     const contentType = resp.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
       const errData = await resp.json();
-      addLog('VOICE', 'Fish Audio unavailable — using browser TTS');
+      addLog('VOICE', 'Fish Audio unavailable — browser TTS');
       addLog('ERR', errData.reply || JSON.stringify(errData));
       browserSpeak(cleanText);
       return;
     }
 
     const audioBlob = await resp.blob();
-    addLog('VOICE', 'Blob: ' + audioBlob.size + ' bytes | ' + audioBlob.type);
+    addLog('VOICE', 'Blob: ' + audioBlob.size + 'b');
+    if (audioBlob.size < 100) { browserSpeak(cleanText); return; }
 
-    if (audioBlob.size < 100) {
-      addLog('VOICE', 'Blob too small — using browser TTS');
-      browserSpeak(cleanText);
-      return;
-    }
-
-    const audioUrl = URL.createObjectURL(
-      new Blob([audioBlob], { type: 'audio/mpeg' })
-    );
-
+    const audioUrl = URL.createObjectURL(new Blob([audioBlob], { type: 'audio/mpeg' }));
     const audio = new Audio(audioUrl);
     audio.preload = 'auto';
     state.currentAudio = audio;
     unlockAudio();
 
     audio.oncanplaythrough = async () => {
-      try {
-        startLipSync();
-        await audio.play();
-        addLog('VOICE', 'Fish Audio playing ✅');
-      } catch (e) {
-        stopLipSync();
-        addLog('VOICE', 'Autoplay blocked — using browser TTS');
-        browserSpeak(cleanText);
-      }
+      try { startLipSync(); await audio.play(); addLog('VOICE', 'Fish Audio playing'); }
+      catch (e) { stopLipSync(); browserSpeak(cleanText); }
     };
-
-    audio.onended = () => {
-      stopLipSync();
-      state.currentAudio = null;
-      URL.revokeObjectURL(audioUrl);
-      addLog('VOICE', 'Audio finished');
-    };
-
-    audio.onerror = () => {
-      stopLipSync();
-      state.currentAudio = null;
-      URL.revokeObjectURL(audioUrl);
-      addLog('VOICE', 'Fish Audio error — using browser TTS');
-      browserSpeak(cleanText);
-    };
-
+    audio.onended = () => { stopLipSync(); state.currentAudio = null; URL.revokeObjectURL(audioUrl); addLog('VOICE', 'Done'); };
+    audio.onerror = () => { stopLipSync(); state.currentAudio = null; URL.revokeObjectURL(audioUrl); browserSpeak(cleanText); };
     audio.load();
 
   } catch (err) {
-    stopLipSync();
-    state.currentAudio = null;
-    addLog('VOICE', 'Fish Audio failed — using browser TTS');
+    stopLipSync(); state.currentAudio = null;
     addLog('ERR', err.message);
     browserSpeak(cleanText);
   }
@@ -588,7 +513,7 @@ async function triggerN8n(payload) {
   try {
     const headers = { 'Content-Type': 'application/json' };
     if (state.n8nSecret) headers['Authorization'] = 'Bearer ' + state.n8nSecret;
-    await fetch(state.n8nWebhook, { method: 'POST', headers, body: JSON.stringify(payload), mode: 'no-cors' });
+    await fetch(state.n8nWebhook, { method:'POST', headers, body:JSON.stringify(payload), mode:'no-cors' });
     state.n8nCallCount++;
     document.getElementById('stat-webhooks').textContent = state.n8nCallCount;
     document.getElementById('n8n-payload').textContent = JSON.stringify(payload, null, 2);
@@ -618,11 +543,11 @@ async function sendMessage() {
     addLog('ACAD', response.substring(0, 40) + '...');
     if (state.voiceEnabled) speak(response);
     if (state.n8nMode === 'all' || state.n8nMode === 'question') {
-      triggerN8n({ student: 'student_001', subject: state.subject, question: text, response, timestamp: new Date().toISOString() });
+      triggerN8n({ student:'student_001', subject:state.subject, question:text, response, timestamp:new Date().toISOString() });
     }
   } catch (err) {
     removeTyping(typingId);
-    addMessage('ACAD', '⚠️ Error: ' + err.message);
+    addMessage('ACAD', 'Error: ' + err.message);
     addLog('ERR', err.message);
   }
   document.getElementById('send-btn').disabled = false;
@@ -633,9 +558,9 @@ function addMessage(role, text) {
   const container = document.getElementById('chat-messages');
   const msg = document.createElement('div');
   msg.className = 'message ' + role;
-  const rendered = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  const rendered = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
   const tag = role === 'ACAD' ? '<span class="msg-tag tag-ACAD">ACAD</span>' : '<span class="msg-tag tag-user">STUDENT</span>';
-  msg.innerHTML = '<div class="msg-avatar">' + (role === 'ACAD' ? 'AI' : 'YOU') + '</div><div><div class="msg-bubble">' + rendered + '</div><div class="msg-meta">' + tag + '<span>' + getSessionTime() + '</span></div></div>';
+  msg.innerHTML = '<div class="msg-avatar">' + (role==='ACAD'?'AI':'YOU') + '</div><div><div class="msg-bubble">' + rendered + '</div><div class="msg-meta">' + tag + '<span>' + getSessionTime() + '</span></div></div>';
   container.appendChild(msg);
   container.scrollTop = container.scrollHeight;
 }
@@ -653,13 +578,13 @@ function showTyping() {
 
 function removeTyping(id) { const el = document.getElementById(id); if (el) el.remove(); }
 function quickPrompt(text) { document.getElementById('chat-input').value = text; sendMessage(); }
-function handleKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function handleKeydown(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
 
 // ── CONTROLS ──────────────────────────────────────────────────────
 function setSubject(subj) {
   state.subject = subj === 'General' ? 'General Studies' : subj;
   document.getElementById('subject-label').textContent = state.subject.toUpperCase();
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === subj.toUpperCase() || (subj === 'General' && b.textContent === 'ALL')));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === subj.toUpperCase() || (subj==='General' && b.textContent==='ALL')));
   const prompts = { Mathematics:['Solve a problem','Explain a theorem','Show working steps','Quiz me','Common mistakes'], Science:['Explain a concept','Give an experiment','Quiz me','Diagram this','Real-world example'], History:['Key events','Why did this happen?','Compare periods','Quiz me','Timeline'], Literature:['Analyze a theme','Character study','Quiz me','Writing tips','Summarize'], Coding:['Debug my code','Explain this pattern','Best practices','Write a function','Quiz me'], General:['Explain simply','Quiz me','Worked example','Study plan','Summary'] };
   const list = prompts[subj] || prompts.General;
   document.getElementById('quick-prompts').innerHTML = list.map(p => '<button class="quick-btn" onclick="quickPrompt(\'' + p + '\')">' + p + '</button>').join('');
@@ -679,20 +604,20 @@ function toggleVoice() {
 
 function saveBackendUrl() {
   const url = document.getElementById('backend-url').value.trim();
-  if (!url) { addLog('ERR', 'Backend URL empty'); return; }
+  if (!url) { addLog('ERR','Backend URL empty'); return; }
   state.backendUrl = url;
   document.getElementById('ai-dot').className = 'dot';
-  addLog('CFG', 'Backend URL saved: ' + url);
-  addMessage('ACAD', '✅ Backend URL updated to <strong>' + url + '</strong>');
+  addLog('CFG','Backend URL saved: ' + url);
+  addMessage('ACAD','Backend URL updated to ' + url);
 }
 
 function saveVoiceConfig() {
   const url = document.getElementById('sadtalker-url').value.trim();
-  if (!url) { addLog('ERR', 'Voice backend URL empty'); return; }
+  if (!url) { addLog('ERR','Voice backend URL empty'); return; }
   state.voiceBackendUrl = url;
   document.getElementById('voice-dot').className = 'dot warn';
-  addLog('CFG', 'Voice backend saved: ' + url);
-  addMessage('ACAD', '🎙 Fish Audio backend configured at <strong>' + url + '</strong>. Enable voice output!');
+  addLog('CFG','Voice backend saved: ' + url);
+  addMessage('ACAD','Fish Audio backend configured at ' + url);
 }
 
 async function testVoice() {
@@ -700,7 +625,7 @@ async function testVoice() {
   state.voiceBackendUrl = url;
   state.voiceEnabled = true;
   document.getElementById('voice-dot').className = 'dot';
-  addLog('VOICE', 'Testing Fish Audio...');
+  addLog('VOICE','Testing Fish Audio...');
   await speak('Hello! This is a test of the ACAD voice engine powered by Fish Audio.');
 }
 
@@ -713,18 +638,18 @@ function saveN8nConfig() {
     document.getElementById('n8n-dot').className = 'dot warn';
     document.getElementById('n8n-status-dot').className = 'dot warn';
     document.getElementById('n8n-status-text').textContent = 'Connected (pending test)';
-    addLog('N8N', 'Webhook configured');
+    addLog('N8N','Webhook configured');
   }
 }
 
 async function testN8nWebhook() {
   if (!state.n8nWebhook) { alert('Enter webhook URL first'); return; }
   saveN8nConfig();
-  await triggerN8n({ type: 'ping', source: 'ACAD', timestamp: new Date().toISOString() });
+  await triggerN8n({ type:'ping', source:'ACAD', timestamp:new Date().toISOString() });
   document.getElementById('n8n-dot').className = 'dot';
   document.getElementById('n8n-status-dot').className = 'dot';
-  document.getElementById('n8n-status-text').textContent = 'Connected ✓';
-  addLog('N8N', 'Test ping sent');
+  document.getElementById('n8n-status-text').textContent = 'Connected';
+  addLog('N8N','Test ping sent');
 }
 
 let recognition = null;
@@ -735,10 +660,10 @@ function toggleMic() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.continuous = false; recognition.interimResults = true; recognition.lang = 'en-US';
-  recognition.onstart = () => { btn.classList.add('recording'); btn.textContent = '⏹'; addLog('MIC', 'Listening...'); };
+  recognition.onstart  = () => { btn.classList.add('recording'); btn.textContent = '⏹'; addLog('MIC','Listening...'); };
   recognition.onresult = (e) => { document.getElementById('chat-input').value = Array.from(e.results).map(r => r[0].transcript).join(''); };
-  recognition.onend = () => { btn.classList.remove('recording'); btn.textContent = '🎤'; recognition = null; const t = document.getElementById('chat-input').value; if (t) sendMessage(); };
-  recognition.onerror = (e) => { addLog('ERR', 'Mic: ' + e.error); btn.classList.remove('recording'); btn.textContent = '🎤'; recognition = null; };
+  recognition.onend    = () => { btn.classList.remove('recording'); btn.textContent = '🎤'; recognition = null; const t = document.getElementById('chat-input').value; if (t) sendMessage(); };
+  recognition.onerror  = (e) => { addLog('ERR','Mic: ' + e.error); btn.classList.remove('recording'); btn.textContent = '🎤'; recognition = null; };
   recognition.start();
 }
 
@@ -752,14 +677,14 @@ function addLog(type, msg) {
   const log = document.getElementById('session-log');
   const entry = document.createElement('div');
   entry.className = 'log-entry';
-  const colors = { INIT:'var(--accent3)', SYS:'var(--accent)', CFG:'var(--accent2)', USER:'#fff', ACAD:'var(--accent)', AI:'var(--accent)', N8N:'#ff8c00', VOICE:'var(--accent3)', MIC:'var(--accent3)', ERR:'var(--danger)' };
+  const colors = { INIT:'var(--accent3)',SYS:'var(--accent)',CFG:'var(--accent2)',USER:'#fff',ACAD:'var(--accent)',AI:'var(--accent)',N8N:'#ff8c00',VOICE:'var(--accent3)',MIC:'var(--accent3)',ERR:'var(--danger)' };
   entry.innerHTML = '<span class="log-time">' + getSessionTime() + '</span><span class="log-type" style="color:' + (colors[type]||'var(--text-dim)') + ';">' + type + '</span><span>' + msg + '</span>';
   log.appendChild(entry);
   log.scrollTop = log.scrollHeight;
 }
 
 setInterval(() => { document.getElementById('stat-time').textContent = Math.floor((Date.now()-state.sessionStart)/60000) + 'm'; }, 10000);
-setTimeout(() => { addLog('SYS', 'n8n integration ready'); addLog('SYS', 'Lip sync engine initialized'); addLog('CFG', 'Connecting to Render backend...'); }, 500);
+setTimeout(() => { addLog('SYS','n8n integration ready'); addLog('SYS','Lip sync engine initialized'); addLog('CFG','Connecting to backend...'); }, 500);
 </script>
 </body>
 </html>
