@@ -89,13 +89,9 @@ def generate_speech(text: str, audio_id: str):
 # ═══════════════════════════════════════
 # ROOT (FIX FOR 404)
 # ═══════════════════════════════════════
-@app.route('/', methods=['GET'])
+@app.route('/')
 def home():
-    return jsonify({
-        'status': 'ok',
-        'message': 'Smart Tutor API is live',
-        'health_endpoint': '/health'
-    })
+    return send_from_directory('.', 'index.html')
 # ═══════════════════════════════════════
 # HEALTH
 # ═══════════════════════════════════════
