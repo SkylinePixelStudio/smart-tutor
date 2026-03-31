@@ -416,20 +416,49 @@ function stopLipSync() {
   if (wave) wave.classList.remove('active');
 }
 
-// ── BROWSER TTS FALLBACK ──────────────────────────────────────────
+// ── BROWSER TTS FALLBACK (with long-text fix) ─────────────────────
 function browserSpeak(text) {
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v =>
-    v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
-  );
-  if (preferred) u.voice = preferred;
-  u.rate = 0.95;
-  u.onstart = () => { startLipSync(); addLog('VOICE', 'Browser TTS speaking...'); };
-  u.onend   = () => { stopLipSync();  addLog('VOICE', 'Done'); };
-  u.onerror = (e) => { stopLipSync(); addLog('ERR', 'Browser TTS: ' + e.error); };
-  window.speechSynthesis.speak(u);
+
+  // Split into sentences to avoid Chrome 15-second cutoff bug
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  let index = 0;
+
+  function speakNext() {
+    if (index >= sentences.length) {
+      stopLipSync();
+      addLog('VOICE', 'Done');
+      return;
+    }
+
+    const u = new SpeechSynthesisUtterance(sentences[index].trim());
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
+    );
+    if (preferred) u.voice = preferred;
+    u.rate = 0.95;
+
+    if (index === 0) {
+      u.onstart = () => { startLipSync(); addLog('VOICE', 'Browser TTS speaking...'); };
+    }
+
+    u.onend = () => {
+      index++;
+      speakNext();
+    };
+
+    u.onerror = (e) => {
+      // Skip errored sentence and continue
+      addLog('ERR', 'TTS sentence error: ' + e.error);
+      index++;
+      speakNext();
+    };
+
+    window.speechSynthesis.speak(u);
+  }
+
+  speakNext();
 }
 
 // ── SPEAK (Fish Audio + browser TTS fallback) ─────────────────────
