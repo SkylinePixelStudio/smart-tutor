@@ -137,6 +137,8 @@ def chat():
 
 
 # ── VOICE (Fish Audio) ────────────────────────────────────────────
+from flask import Response
+
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate():
     if request.method == 'OPTIONS':
@@ -151,37 +153,43 @@ def generate():
     clean_text = (
         text.replace('**', '').replace('#', '')
             .replace('*', '').replace('`', '').strip()
-    )
-    if len(clean_text) > 300:
-        clean_text = clean_text[:300]
+    )[:300]
 
     print(f"Generating speech: {clean_text[:60]}...")
-    audio_id = str(uuid.uuid4())[:8]
-    output_path, error = generate_speech(clean_text, audio_id)
 
-    if output_path is None:
-        print(f"Speech generation failed: {error}")
-        return jsonify({'success': False, 'reply': f'Fish Audio TTS failed: {error}'})
+    try:
+        fish_resp = requests.post(
+            'https://api.fish.audio/v1/tts',
+            headers={
+                'Authorization': f'Bearer {os.environ.get("FISH_AUDIO_KEY", "")}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'text': clean_text,
+                'reference_id': os.environ.get('FISH_VOICE_ID', '8fcc581b791f496eb11d8f4daef4995c'),
+                'format': 'mp3',
+                'mp3_bitrate': 128
+            },
+            timeout=30
+        )
 
-    host = request.host_url.rstrip('/')
-    audio_url = f"{host}/audio/speech_{audio_id}.wav"
-    print(f"Audio ready: {audio_url}")
-    return jsonify({'success': True, 'audio_url': audio_url})
+        if fish_resp.status_code != 200:
+            print(f"Fish Audio error: {fish_resp.status_code} {fish_resp.text}")
+            return jsonify({
+                'success': False,
+                'reply': f'Fish Audio TTS failed: HTTP {fish_resp.status_code}: {fish_resp.text}'
+            }), 500
 
+        return Response(
+            fish_resp.content,
+            status=200,
+            mimetype='audio/mpeg',
+            headers={
+                'Access-Control-Allow-Origin': '*',
+                'Content-Length': str(len(fish_resp.content))
+            }
+        )
 
-# ── SERVE AUDIO ───────────────────────────────────────────────────
-@app.route('/audio/<filename>', methods=['GET'])
-def serve_audio(filename):
-    return send_from_directory(OUTPUT_DIR, filename)
-
-
-# ── ROOT ──────────────────────────────────────────────────────────
-@app.route('/')
-def index():
-    return send_from_directory(BASE_DIR, 'index.html')
-
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    print(f"Starting on port {port}...")
-    app.run(host='0.0.0.0', port=port, debug=False)
+    except Exception as e:
+        print(f"Fish Audio exception: {e}")
+        return jsonify({'success': False, 'reply': str(e)}), 500
