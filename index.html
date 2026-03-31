@@ -314,6 +314,13 @@
 </div>
 
 <script>
+
+  // Unlock autoplay on first user interaction
+document.addEventListener('click', () => {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === 'suspended') ctx.resume();
+}, { once: true });
+  
 const RENDER_URL = "https://smart-tutor-khps.onrender.com";
 
 const state = {
