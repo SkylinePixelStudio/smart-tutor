@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import uuid
 import requests
+import json
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=False)
@@ -86,15 +87,18 @@ def generate_speech(text: str, audio_id: str):
         print(f"Fish Audio exception: {e}")
         return None, str(e)
 
-# ═══════════════════════════════════════
-# ROOT (FIX FOR 404)
-# ═══════════════════════════════════════
+
+# =======================================
+# ROOT
+# =======================================
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
-# ═══════════════════════════════════════
+
+
+# =======================================
 # HEALTH
-# ═══════════════════════════════════════
+# =======================================
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
@@ -108,34 +112,31 @@ def health():
     })
 
 
-# ═══════════════════════════════════════
-# TOPICS  ← THIS WAS MISSING — caused the 404
-# ═══════════════════════════════════════
+# =======================================
+# TOPICS
+# =======================================
 @app.route('/topics', methods=['GET'])
 def topics():
-    """Return the list of available topics.
-    The frontend has built-in defaults so returning [] is fine —
-    it just tells the frontend to use its own default topic cards."""
     topic_list = [
-        {"id": "photosynthesis",      "title": "Photosynthesis",           "subject": "Biology",      "emoji": "🌿", "grade": "Grade 8-10",  "color": "#10b981"},
-        {"id": "newtons-laws",        "title": "Newton's Laws of Motion",  "subject": "Physics",      "emoji": "⚡", "grade": "Grade 9-11",  "color": "#6366f1"},
-        {"id": "quadratic-equations", "title": "Quadratic Equations",      "subject": "Mathematics",  "emoji": "📐", "grade": "Grade 9-10",  "color": "#06b6d4"},
-        {"id": "python-basics",       "title": "Python Programming",       "subject": "Coding",       "emoji": "💻", "grade": "Grade 10-12", "color": "#8b5cf6"},
-        {"id": "water-cycle",         "title": "The Water Cycle",          "subject": "Geography",    "emoji": "💧", "grade": "Grade 6-8",   "color": "#3b82f6"},
-        {"id": "periodic-table",      "title": "The Periodic Table",       "subject": "Chemistry",    "emoji": "🧪", "grade": "Grade 8-10",  "color": "#ec4899"},
-        {"id": "human-body",          "title": "Human Body Systems",       "subject": "Biology",      "emoji": "🫀", "grade": "Grade 7-9",   "color": "#ef4444"},
-        {"id": "world-war-2",         "title": "World War II",             "subject": "History",      "emoji": "🌍", "grade": "Grade 9-12",  "color": "#f59e0b"},
-        {"id": "electricity",         "title": "Electricity & Circuits",   "subject": "Physics",      "emoji": "🔋", "grade": "Grade 8-10",  "color": "#22d3ee"},
-        {"id": "fractions",           "title": "Fractions & Decimals",     "subject": "Mathematics",  "emoji": "➗", "grade": "Grade 5-7",   "color": "#a78bfa"},
-        {"id": "climate-change",      "title": "Climate Change",           "subject": "Environmental","emoji": "🌱", "grade": "Grade 8-12",  "color": "#34d399"},
-        {"id": "shakespeare",         "title": "Shakespeare — Macbeth",    "subject": "Literature",   "emoji": "📖", "grade": "Grade 10-12", "color": "#f97316"},
+        {"id": "photosynthesis",      "title": "Photosynthesis",           "subject": "Biology",       "emoji": "🌿", "grade": "Grade 8-10",  "color": "#10b981"},
+        {"id": "newtons-laws",        "title": "Newton's Laws of Motion",  "subject": "Physics",       "emoji": "⚡", "grade": "Grade 9-11",  "color": "#6366f1"},
+        {"id": "quadratic-equations", "title": "Quadratic Equations",      "subject": "Mathematics",   "emoji": "📐", "grade": "Grade 9-10",  "color": "#06b6d4"},
+        {"id": "python-basics",       "title": "Python Programming",       "subject": "Coding",        "emoji": "💻", "grade": "Grade 10-12", "color": "#8b5cf6"},
+        {"id": "water-cycle",         "title": "The Water Cycle",          "subject": "Geography",     "emoji": "💧", "grade": "Grade 6-8",   "color": "#3b82f6"},
+        {"id": "periodic-table",      "title": "The Periodic Table",       "subject": "Chemistry",     "emoji": "🧪", "grade": "Grade 8-10",  "color": "#ec4899"},
+        {"id": "human-body",          "title": "Human Body Systems",       "subject": "Biology",       "emoji": "🫀", "grade": "Grade 7-9",   "color": "#ef4444"},
+        {"id": "world-war-2",         "title": "World War II",             "subject": "History",       "emoji": "🌍", "grade": "Grade 9-12",  "color": "#f59e0b"},
+        {"id": "electricity",         "title": "Electricity & Circuits",   "subject": "Physics",       "emoji": "🔋", "grade": "Grade 8-10",  "color": "#22d3ee"},
+        {"id": "fractions",           "title": "Fractions & Decimals",     "subject": "Mathematics",   "emoji": "➗", "grade": "Grade 5-7",   "color": "#a78bfa"},
+        {"id": "climate-change",      "title": "Climate Change",           "subject": "Environmental", "emoji": "🌱", "grade": "Grade 8-12",  "color": "#34d399"},
+        {"id": "shakespeare",         "title": "Shakespeare — Macbeth",    "subject": "Literature",    "emoji": "📖", "grade": "Grade 10-12", "color": "#f97316"},
     ]
     return jsonify({'success': True, 'topics': topic_list})
 
 
-# ═══════════════════════════════════════
-# GENERATE SLIDES  ← WAS MISSING
-# ═══════════════════════════════════════
+# =======================================
+# GENERATE SLIDES
+# =======================================
 @app.route('/generate-slides', methods=['POST', 'OPTIONS'])
 def generate_slides():
     if request.method == 'OPTIONS':
@@ -171,7 +172,6 @@ def generate_slides():
             temperature=0.6,
         )
 
-        # Strip any accidental markdown fences Groq may add
         cleaned = raw.strip()
         if cleaned.startswith('```'):
             cleaned = cleaned.split('```')[1]
@@ -179,10 +179,8 @@ def generate_slides():
                 cleaned = cleaned[4:]
         cleaned = cleaned.strip()
 
-        import json
         slides = json.loads(cleaned)
 
-        # Validate basic structure
         if not isinstance(slides, list) or len(slides) == 0:
             raise ValueError("Parsed result is not a non-empty list")
 
@@ -191,7 +189,6 @@ def generate_slides():
 
     except Exception as e:
         print(f"Slide generation error: {e}")
-        # Return fallback slides so the frontend can still run a lecture
         fallback = [
             {"title": f"Introduction to {topic}",  "emoji": "📚", "points": ["Overview of this topic", "Why it matters", "Key concepts we will cover", "What you will learn today"]},
             {"title": "Core Concepts",              "emoji": "🔑", "points": ["Fundamental principles", "Key definitions", "Important background", "Basic framework"]},
@@ -202,9 +199,9 @@ def generate_slides():
         return jsonify({'success': True, 'data': {'slides': fallback, 'topic': topic}})
 
 
-# ═══════════════════════════════════════
-# TEACH (slide narration)  ← WAS MISSING
-# ═══════════════════════════════════════
+# =======================================
+# TEACH (slide narration)
+# =======================================
 @app.route('/teach', methods=['POST', 'OPTIONS'])
 def teach():
     if request.method == 'OPTIONS':
@@ -251,9 +248,9 @@ def teach():
         return jsonify({'success': False, 'error': str(e)})
 
 
-# ═══════════════════════════════════════
-# DOUBT  ← WAS MISSING
-# ═══════════════════════════════════════
+# =======================================
+# DOUBT
+# =======================================
 @app.route('/doubt', methods=['POST', 'OPTIONS'])
 def doubt():
     if request.method == 'OPTIONS':
@@ -267,12 +264,11 @@ def doubt():
     topic        = data.get('topic', 'General')
     slide_title  = data.get('slide_title', '')
     slide_points = data.get('slide_points', [])
-    history      = data.get('history', [])   # list of {question, answer} dicts
+    history      = data.get('history', [])
 
     if not question:
         return jsonify({'success': False, 'error': 'No question provided.'})
 
-    # Build conversation history for context
     messages = [
         {
             'role': 'system',
@@ -286,8 +282,7 @@ def doubt():
         }
     ]
 
-    # Add prior doubt exchanges so ACAD has context
-    for item in history[-3:]:   # last 3 exchanges max
+    for item in history[-3:]:
         messages.append({'role': 'user',      'content': item.get('question', '')})
         messages.append({'role': 'assistant', 'content': item.get('answer', '')})
 
@@ -303,9 +298,9 @@ def doubt():
         return jsonify({'success': False, 'error': str(e)})
 
 
-# ═══════════════════════════════════════
-# CHAT (Groq)  — unchanged from original
-# ═══════════════════════════════════════
+# =======================================
+# CHAT
+# =======================================
 @app.route('/chat', methods=['POST', 'OPTIONS'])
 def chat():
     if request.method == 'OPTIONS':
@@ -345,12 +340,12 @@ def chat():
         return jsonify({'success': False, 'reply': f'Error: {str(e)}'})
 
 
-# ═══════════════════════════════════════
-# VOICE / GENERATE (Fish Audio) — unchanged
-# ═══════════════════════════════════════
+# =======================================
+# VOICE / GENERATE (Fish Audio)
+# =======================================
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate():
-         if request.method == 'OPTIONS':
+    if request.method == 'OPTIONS':
         return _cors_preflight()
 
     data = request.get_json() or {}
@@ -362,8 +357,8 @@ def generate():
 
     print(f"Generating speech: {clean_text[:60]}...")
 
-    fish_key     = os.environ.get("FISH_API_KEY") or os.environ.get("FISH_AUDIO_KEY", "")
-    fish_voice   = os.environ.get("FISH_VOICE_ID", "8fcc581b791f496eb11d8f4daef4995c")
+    fish_key   = os.environ.get("FISH_API_KEY") or os.environ.get("FISH_AUDIO_KEY", "")
+    fish_voice = os.environ.get("FISH_VOICE_ID", "8fcc581b791f496eb11d8f4daef4995c")
 
     if not fish_key:
         return jsonify({'success': False, 'reply': 'FISH_API_KEY not configured on server.'}), 500
@@ -406,11 +401,10 @@ def generate():
         return jsonify({'success': False, 'reply': str(e)}), 500
 
 
-# ═══════════════════════════════════════
+# =======================================
 # HELPER
-# ═══════════════════════════════════════
+# =======================================
 def _cors_preflight():
-    """Return a standard CORS preflight response."""
     resp = jsonify({'status': 'ok'})
     resp.headers['Access-Control-Allow-Origin']  = '*'
     resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
@@ -418,9 +412,9 @@ def _cors_preflight():
     return resp, 204
 
 
-# ═══════════════════════════════════════
+# =======================================
 # ENTRY POINT
-# ═══════════════════════════════════════
+# =======================================
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"Starting on port {port}")
