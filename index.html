@@ -1256,7 +1256,7 @@ if(window.speechSynthesis){
   });
 })();
 
-  const API_BASE = "https://smart-tutor-w1f9.onrender.com";
+ const API_BASE = "https://smart-tutor-w1f9.onrender.com";
 
 async function loadTopics() {
   const res = await fetch(`${API_BASE}/topics`);
@@ -1268,7 +1268,7 @@ async function loadTopics() {
 }
 
 function displayTopics(topics) {
-  const container = document.querySelector(".topics-grid");
+  const container = document.getElementById("topics-grid");
   container.innerHTML = "";
 
   topics.forEach(topic => {
@@ -1288,7 +1288,6 @@ function displayTopics(topics) {
 }
 
 loadTopics();
-
   
 </script>
 </body>
