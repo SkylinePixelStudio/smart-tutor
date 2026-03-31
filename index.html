@@ -1255,6 +1255,41 @@ if(window.speechSynthesis){
     setTimeout(connectBackend, 35000);
   });
 })();
+
+  const API_BASE = "https://smart-tutor-w1f9.onrender.com";
+
+async function loadTopics() {
+  const res = await fetch(`${API_BASE}/topics`);
+  const data = await res.json();
+
+  if (data.success) {
+    displayTopics(data.topics);
+  }
+}
+
+function displayTopics(topics) {
+  const container = document.querySelector(".topics-grid");
+  container.innerHTML = "";
+
+  topics.forEach(topic => {
+    const card = document.createElement("div");
+    card.className = "topic-card";
+    card.style.setProperty('--tcolor', topic.color);
+
+    card.innerHTML = `
+      <span class="topic-emoji">${topic.emoji}</span>
+      <div class="topic-subject">${topic.subject}</div>
+      <div class="topic-title">${topic.title}</div>
+      <div class="topic-grade">${topic.grade}</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+loadTopics();
+
+  
 </script>
 </body>
 </html>
