@@ -415,19 +415,6 @@ function stopLipSync() {
   if (wave) wave.classList.remove('active');
 }
 
-// ── VOICE / FISH AUDIO ────────────────────────────────────────────
-let audioContext = null;
-
-// Call this on first user click/interaction to unlock AudioContext
-function unlockAudio() {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-}
-
 // ── AUDIO UNLOCK ──────────────────────────────────────────────────
 let audioContext = null;
 function unlockAudio() {
