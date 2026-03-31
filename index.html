@@ -733,25 +733,68 @@ function renderTopics(topics){
 }
 
 // ═══════════════════════════════════════
-// SELECT TOPIC
+// REPLACE YOUR selectTopic FUNCTION WITH THIS
 // ═══════════════════════════════════════
-function selectTopic(id){
-  const topic=S.topicsMap[id]; if(!topic) return;
-  S.topic=topic; S.slides=[]; S.currentSlide=0; S.doubtHistory=[]; S.lectureActive=false; S.lecturePaused=false;
+function selectTopic(id) {
+  const topic = S.topicsMap[id];
+  if (!topic) {
+    console.warn('[selectTopic] Topic not found in map:', id, Object.keys(S.topicsMap));
+    return;
+  }
+ 
+  // Reset state
+  S.topic = topic;
+  S.slides = [];
+  S.currentSlide = 0;
+  S.doubtHistory = [];
+  S.lectureActive = false;
+  S.lecturePaused = false;
+ 
+  // Show classroom FIRST before any DOM queries
   showScreen('screen-classroom');
-  document.getElementById('topic-pill').textContent=`${topic.emoji} ${topic.title}`;
-  document.getElementById('avatar-role-label').textContent=`${topic.subject.toUpperCase()} · AI TUTOR`;
-  document.getElementById('d-context').textContent=`Topic: ${topic.title}`;
-  setSubject(topic.subject);
-  const warn=S.backendOk?'':'<br><br>⚠️ No backend connected — connect your Render URL on the home screen for AI responses.';
-  addMessage('ACAD',
-    `Welcome to <strong>${topic.title}</strong>! I am ACAD, your AI tutor.${warn}<br><br>`+
-    `• Ask me anything about <strong>${topic.title}</strong><br>`+
-    `• Click <strong>▶ AUTO LECTURE MODE</strong> to start a full AI-generated lecture<br>`+
-    `• Click <strong>✋ Ask Doubt</strong> anytime to pause and ask a question<br>`+
+ 
+  // Now safely update classroom DOM (it's visible and in layout)
+  try {
+    document.getElementById('topic-pill').textContent = `${topic.emoji} ${topic.title}`;
+  } catch (e) { console.error('topic-pill', e); }
+ 
+  try {
+    document.getElementById('avatar-role-label').textContent =
+      `${(topic.subject || 'GENERAL').toUpperCase()} · AI TUTOR`;
+  } catch (e) { console.error('avatar-role-label', e); }
+ 
+  try {
+    document.getElementById('d-context').textContent = `Topic: ${topic.title}`;
+  } catch (e) { console.error('d-context', e); }
+ 
+  try {
+    setSubject(topic.subject || 'General');
+  } catch (e) {
+    console.error('setSubject failed:', e);
+    // fallback: at least populate quick prompts with generic ones
+    try {
+      document.getElementById('quick-prompts').innerHTML =
+        ['Explain this topic', 'Quiz me', 'Give an example', 'Summary', 'Key facts']
+          .map(q => `<button class="quick-btn" onclick="quickPrompt('${q}')">${q}</button>`)
+          .join('');
+    } catch (_) {}
+  }
+ 
+  const warn = S.backendOk
+    ? ''
+    : '<br><br>⚠️ Backend not connected — AI responses unavailable. '
+      + 'Check your Render URL.';
+ 
+  addMessage(
+    'ACAD',
+    `Welcome to <strong>${topic.title}</strong>! I am ACAD, your AI tutor.${warn}<br><br>` +
+    `• Ask me anything about <strong>${topic.title}</strong><br>` +
+    `• Click <strong>▶ AUTO LECTURE MODE</strong> to start a full AI-generated lecture<br>` +
+    `• Click <strong>✋ Ask Doubt</strong> anytime to pause and ask a question<br>` +
     `• Use <strong>🎙 Voice Chat</strong> on the right to speak with me directly`
   );
-  addLog('SYS','Classroom: '+topic.title);
+ 
+  addLog('SYS', 'Classroom: ' + topic.title);
 }
 
 // ═══════════════════════════════════════
@@ -1194,18 +1237,48 @@ function toggleDoubtMic(){
 }
 
 // ═══════════════════════════════════════
-// SUBJECT TABS
+// REPLACE YOUR setSubject FUNCTION WITH THIS
 // ═══════════════════════════════════════
-function setSubject(subj){
-  S.subject=subj==='General'?'General Studies':subj;
-  document.getElementById('subject-label').textContent=S.subject.toUpperCase();
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    const match=b.textContent===subj.toUpperCase()||(subj==='General'&&b.textContent==='ALL')||(subj==='General Studies'&&b.textContent==='ALL');
-    b.classList.toggle('active',match);
+function setSubject(subj) {
+  // Normalise
+  const display = (!subj || subj === 'General') ? 'General Studies' : subj;
+  S.subject = display;
+ 
+  // Footer label — may not exist on topics screen, so guard it
+  const lbl = document.getElementById('subject-label');
+  if (lbl) lbl.textContent = display.toUpperCase();
+ 
+  // Tab buttons — only exist inside classroom
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const t = b.textContent.trim().toUpperCase();
+    const match =
+      t === subj.toUpperCase() ||
+      (t === 'ALL' && (!subj || subj === 'General' || subj === 'General Studies'));
+    b.classList.toggle('active', match);
   });
-  const p={Mathematics:['Solve a problem','Explain a theorem','Show working','Quiz me','Common mistakes'],Science:['Explain a concept','Give an experiment','Quiz me','Real-world example','Diagram this'],History:['Key events','Why did this happen?','Compare periods','Quiz me','Timeline'],Literature:['Analyse a theme','Character study','Quiz me','Writing tips','Summarise'],Coding:['Debug my code','Explain this pattern','Best practices','Write a function','Quiz me'],Biology:['Explain a process','Give an example','Quiz me','Draw a diagram','Real world use'],Chemistry:['Explain a reaction','Balance equation','Quiz me','Lab safety','Real world'],Physics:['Explain a law','Solve a problem','Quiz me','Real world example','Formula help'],Geography:['Explain a concept','Give examples','Quiz me','Map reading','Current events'],Environmental:['Explain a concept','Give examples','Quiz me','Impact & solutions','Stats'],General:['Explain simply','Quiz me','Worked example','Study plan','Summary']};
-  const list=p[subj]||p.General;
-  document.getElementById('quick-prompts').innerHTML=list.map(q=>`<button class="quick-btn" onclick="quickPrompt('${q}')">${q}</button>`).join('');
+ 
+  // Quick prompts map
+  const p = {
+    Mathematics:  ['Solve a problem', 'Explain a theorem', 'Show working', 'Quiz me', 'Common mistakes'],
+    Science:      ['Explain a concept', 'Give an experiment', 'Quiz me', 'Real-world example', 'Diagram this'],
+    History:      ['Key events', 'Why did this happen?', 'Compare periods', 'Quiz me', 'Timeline'],
+    Literature:   ['Analyse a theme', 'Character study', 'Quiz me', 'Writing tips', 'Summarise'],
+    Coding:       ['Debug my code', 'Explain this pattern', 'Best practices', 'Write a function', 'Quiz me'],
+    Biology:      ['Explain a process', 'Give an example', 'Quiz me', 'Draw a diagram', 'Real world use'],
+    Chemistry:    ['Explain a reaction', 'Balance equation', 'Quiz me', 'Lab safety', 'Real world'],
+    Physics:      ['Explain a law', 'Solve a problem', 'Quiz me', 'Real world example', 'Formula help'],
+    Geography:    ['Explain a concept', 'Give examples', 'Quiz me', 'Map reading', 'Current events'],
+    Environmental:['Explain a concept', 'Give examples', 'Quiz me', 'Impact & solutions', 'Stats'],
+    General:      ['Explain simply', 'Quiz me', 'Worked example', 'Study plan', 'Summary'],
+  };
+ 
+  const list = p[subj] || p['General'];
+  const qp = document.getElementById('quick-prompts');
+  if (qp) {
+    qp.innerHTML = list
+      .map(q => `<button class="quick-btn" onclick="quickPrompt('${q.replace(/'/g,"\\'")}'">${q}</button>`)
+      .join('');
+  }
 }
 
 // ═══════════════════════════════════════
@@ -1243,16 +1316,30 @@ if(window.speechSynthesis){
 }
 
 // ═══════════════════════════════════════
-// INIT — restore session
+// REPLACE YOUR init IIFE WITH THIS
 // ═══════════════════════════════════════
-(function init(){
-  renderTopics(defaultTopics); // show defaults immediately while connecting
-    document.getElementById('backend-url-input').value = 'https://smart-tutor-w1f9.onrender.com';
-    connectBackend().catch(()=>{
-    setConnectStatus('idle','⏳ Render is waking up… retrying in 35s');
-    setTimeout(connectBackend, 35000);
+(function init() {
+  // 1. Render default topics immediately so cards are clickable right away
+  renderTopics(defaultTopics);
+ 
+  // 2. Pre-fill the (hidden) URL input — do this synchronously
+  const urlInput = document.getElementById('backend-url-input');
+  if (urlInput) urlInput.value = 'https://smart-tutor-w1f9.onrender.com';
+ 
+  // 3. Preload browser TTS voices (Chrome needs this kick)
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+ 
+  // 4. Try connecting to backend — if it times out, retry after Render cold-start window
+  connectBackend().catch(() => {
+    setConnectStatus('idle', '⏳ Render is waking up… retrying in 35 s');
+    setTimeout(() => connectBackend().catch(() => {}), 35000);
   });
 })();
+ 
+
 
  
 </script>
