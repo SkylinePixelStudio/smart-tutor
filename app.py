@@ -350,6 +350,44 @@ def chat():
 # ═══════════════════════════════════════
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate():
+# --------------chat help-------------------------------
+# ═══════════════════════════════════════
+# ACAD EVENT (FOR AVATAR FLOW)
+# ═══════════════════════════════════════
+@app.route('/acad/event', methods=['POST'])
+def acad_event():
+    data = request.get_json() or {}
+
+    topic = data.get('topic', 'General')
+
+    try:
+        # Generate explanation
+        reply = groq_chat([
+            {'role': 'system', 'content': f'Explain {topic} simply for students.'},
+            {'role': 'user', 'content': topic}
+        ], max_tokens=300)
+
+        # Generate voice
+        audio_id = str(uuid.uuid4())
+        audio_path, err = generate_speech(reply, audio_id)
+
+        if err:
+            return jsonify({'success': False, 'error': err})
+
+        return jsonify({
+            'success': True,
+            'text': reply,
+            'audio_url': f"/voice_output/speech_{audio_id}.wav"
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+        @app.route('/voice_output/<filename>')
+       def serve_audio(filename):
+        return send_from_directory(OUTPUT_DIR, filename)
+
+# ----------------chat help---------------------------------------------    
+    
     if request.method == 'OPTIONS':
         return _cors_preflight()
 
