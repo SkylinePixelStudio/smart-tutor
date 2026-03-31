@@ -647,7 +647,7 @@ async function connectBackend(){
   const url=raw.replace(/\/$/,'');
   setConnectStatus('idle','Connecting…');
   try{
-    const d=await fetchJSON(url+'/');
+    const d=await fetchJSON(url+'/health');
     S.backendUrl=url; S.backendOk=true;
     sessionStorage.setItem('acad_backend',url);
     setConnectStatus('ok',`✓ Connected — ${d.service||'ACAD Backend'} · model: ${d.model||'llama-3.1-8b-instant'}`);
