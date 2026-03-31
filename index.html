@@ -417,46 +417,78 @@ function stopLipSync() {
 }
 
 // ── BROWSER TTS FALLBACK (with long-text fix) ─────────────────────
+let ttsKeepalive = null;
+
 function browserSpeak(text) {
   window.speechSynthesis.cancel();
+  if (ttsKeepalive) { clearInterval(ttsKeepalive); ttsKeepalive = null; }
 
-  // Split into sentences to avoid Chrome 15-second cutoff bug
-  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  // Split into small chunks — max 80 chars at natural breaks
+  const sentences = text
+    .replace(/([.!?])\s+/g, '$1|')
+    .replace(/([,;:])\s+/g, '$1|')
+    .split('|')
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
   let index = 0;
+  let speaking = false;
 
-  function speakNext() {
-    if (index >= sentences.length) {
-      stopLipSync();
-      addLog('VOICE', 'Done');
-      return;
-    }
-
-    const u = new SpeechSynthesisUtterance(sentences[index].trim());
+  function getVoice() {
     const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v =>
+    return voices.find(v =>
       v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')
-    );
-    if (preferred) u.voice = preferred;
+    ) || voices[0];
+  }
+
+  function stopLipSync() {
+  if (state.lipSyncInterval) { clearInterval(state.lipSyncInterval); state.lipSyncInterval = null; }
+  if (ttsKeepalive) { clearInterval(ttsKeepalive); ttsKeepalive = null; } // ← add this line
+  state.isSpeaking = false;
+  const mouthOpen = document.getElementById('mouth-open');
+  const mouthClosed = document.getElementById('mouth-closed');
+  const wave = document.getElementById('speaking-wave');
+  if (mouthOpen) { mouthOpen.style.opacity = '0'; mouthOpen.removeAttribute('transform'); }
+  if (mouthClosed) mouthClosed.style.opacity = '1';
+  if (wave) wave.classList.remove('active');
+}
+
+    const chunk = sentences[index];
+    const u = new SpeechSynthesisUtterance(chunk);
+    const voice = getVoice();
+    if (voice) u.voice = voice;
     u.rate = 0.95;
+    u.volume = 1.0;
 
     if (index === 0) {
-      u.onstart = () => { startLipSync(); addLog('VOICE', 'Browser TTS speaking...'); };
+      startLipSync();
+      addLog('VOICE', 'Browser TTS speaking...');
     }
 
-    u.onend = () => {
-      index++;
-      speakNext();
-    };
-
-    u.onerror = (e) => {
-      // Skip errored sentence and continue
-      addLog('ERR', 'TTS sentence error: ' + e.error);
-      index++;
-      speakNext();
+    u.onstart  = () => { speaking = true; };
+    u.onend    = () => { speaking = false; index++; speakNext(); };
+    u.onerror  = (e) => {
+      speaking = false;
+      if (e.error !== 'interrupted') {
+        index++; speakNext();
+      }
     };
 
     window.speechSynthesis.speak(u);
   }
+
+  // Aggressive Chrome keepalive — every 5 seconds force resume
+  ttsKeepalive = setInterval(() => {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      addLog('VOICE', 'TTS resumed (Chrome fix)');
+    }
+    // If synthesis says speaking but nothing is playing, nudge it
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    }
+  }, 5000);
 
   speakNext();
 }
