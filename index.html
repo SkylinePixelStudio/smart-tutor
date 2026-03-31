@@ -497,12 +497,16 @@ async function speak(text) {
       URL.revokeObjectURL(audioUrl); // free memory
       addLog('VOICE', 'Audio finished');
     };
-    audio.onerror = (e) => {
-      stopLipSync();
-      state.currentAudio = null;
-      URL.revokeObjectURL(audioUrl);
-      addLog('ERR', 'Audio playback error: ' + (audio.error?.message || 'unknown'));
-    };
+  
+  audio.onerror = () => {
+  stopLipSync();
+  state.currentAudio = null;
+  URL.revokeObjectURL(audioUrl);
+  const code = audio.error?.code;
+  const codes = { 1:'ABORTED', 2:'NETWORK', 3:'DECODE ERROR', 4:'FORMAT NOT SUPPORTED' };
+  addLog('ERR', `Code ${code}: ${codes[code] || 'unknown'}`);
+  addLog('ERR', `Blob size: ${audioBlob.size} | type: ${audioBlob.type}`);
+   };
 
     audio.load();
 
